@@ -34,7 +34,7 @@ export const mockModules = [
     id: 1,
     titre: 'Confiance en soi',
     description: 'Module pour développer sa confiance en soi',
-    miniature: '/images/default-module.png',
+    miniature: 'https://jeanmarcterrel.com/wp-content/uploads/2024/02/Articles-Blog-1280x720-force-interieure-1080x675.png',
     est_publie: true,
     est_gratuit: true,
     duree_estimee: 60,
@@ -45,7 +45,7 @@ export const mockModules = [
     id: 2,
     titre: "Préparation à l'entretien",
     description: "Techniques pour réussir ses entretiens d'embauche",
-    miniature: '/images/default-module.png',
+    miniature: 'https://www.roberthalf.com/content/dam/roberthalf/images/blogs/fr/fr/migrated-blogs/hr1/manager%20preparation%20entretien.jpg',
     est_publie: true,
     est_gratuit: true,
     duree_estimee: 45,
@@ -56,7 +56,7 @@ export const mockModules = [
     id: 3,
     titre: 'CV et lettre de motivation',
     description: 'Rédiger un CV et une lettre de motivation efficaces',
-    miniature: '/images/default-module.png',
+    miniature: 'https://f.hellowork.com/edito/sites/3/2017/07/lettre-de-motivation.jpg',
     est_publie: true,
     est_gratuit: true,
     duree_estimee: 30,
@@ -107,6 +107,18 @@ export const mockRendezVous = [
         notes: 'Suivi régulier',
         statut: 'confirmé',
         date_creation: '2025-05-11T09:00:00Z'
+      }
+,      
+    {
+        id: 56,
+        patient_id: 1,
+        psychologue_id: 1,
+        date_heure: '2025-07-10T14:00:00Z', // Futur
+        duree: 60,
+        type: 'visio',
+        notes: 'Suivi régulier',
+        statut: 'confirmé',
+        date_creation: '2025-06-11T09:00:00Z'
       }
 ,      
   { id: 2, patient_id: 2, psychologue_id: 1, date_heure: '2024-03-13T14:00:00Z', duree: 60, type: 'visio', notes: 'Bilan de mi-parcours', statut: 'planifié', date_creation: '2024-03-02T09:00:00Z' },

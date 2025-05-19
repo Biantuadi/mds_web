@@ -19,6 +19,20 @@ export const Appointments = (): JSX.Element => {
     }
   }, [user]);
 
+  // Helpers pour formatage
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
+  const formatTime = (iso: string, duree: number) => {
+    const start = new Date(iso);
+    const end = new Date(start.getTime() + duree * 60000);
+    return `${start.getHours().toString().padStart(2, "0")}:${start.getMinutes().toString().padStart(2, "0")} - ${end.getHours().toString().padStart(2, "0")}:${end.getMinutes().toString().padStart(2, "0")}`;
+  };
+
+  // Rendez-vous à venir (date future)
+  const rdvAVenir = [...rendezVous]
+    .filter(rdv => new Date(rdv.date_heure) > new Date())
+    .sort((a, b) => new Date(a.date_heure).getTime() - new Date(b.date_heure).getTime());
+
   return (
     <div className="bg-transparent flex flex-row justify-center ">
       <div className="bg-[url(/backgrounds-a.svg)] bg-[100%_100%] w-[100vw] min-h-screen bg-cover bg-center bg-no-repeat">
@@ -34,7 +48,6 @@ export const Appointments = (): JSX.Element => {
                       RENDEZ-VOUS
                     </div>
                   </div>
-
                   <div className="flex w-[242px] items-center justify-end gap-[30px] relative self-stretch">
                     <div className="flex items-center justify-between px-3.5 py-0 relative flex-1 self-stretch grow">
                       <div className="flex flex-col items-center justify-center gap-2.5 relative flex-1 self-stretch grow">
@@ -44,19 +57,16 @@ export const Appointments = (): JSX.Element => {
                   </div>
                 </div>
               </header>
-
               <div className="flex flex-col w-[318px] h-[154px] items-center justify-center gap-3.5 absolute top-[3px] left-[561px]">
                 <div className="self-stretch h-[13px] [font-family:'Reef-Bold',Helvetica] font-bold text-2xl tracking-[2.40px] whitespace-nowrap relative text-black text-center leading-[normal]">
                   LES AUDACIEUSES ACADEMIE
                 </div>
-
                 <div className="flex flex-col w-[102px] h-24 items-center gap-3.5 relative rounded-[50px] overflow-hidden">
                   <img
                     className="absolute w-[102px] h-[63px] top-0 left-0"
                     alt="Ellipse"
                     src="/home_imgs/ellipse-8.svg"
                   />
-
                   <img
                     className="relative w-24 h-[60px]"
                     alt="Logo arc"
@@ -73,7 +83,10 @@ export const Appointments = (): JSX.Element => {
               <CardContent className="p-6">
                 <ScrollArea className="h-[calc(100vh-300px)]">
                   <div className="flex flex-col gap-6">
-                    {rendezVous.map((session, index) => (
+                    {rdvAVenir.length === 0 && (
+                      <div className="text-[#75746f] text-center">Aucun rendez-vous à venir</div>
+                    )}
+                    {rdvAVenir.map((rdv, index) => (
                       <div key={index} className="flex flex-col gap-2 pb-6 border-b border-gray-200 last:border-0">
                         <div className="flex items-center gap-2">
                           <Badge
@@ -81,17 +94,18 @@ export const Appointments = (): JSX.Element => {
                             style={{ backgroundColor: "#ef7d4f" }}
                           />
                           <span className="[font-family:'Quicksand',Helvetica] font-semibold text-[#ef7d4f] text-base">
-                            {session.date}
+                            {formatDate(rdv.date_heure)}
                           </span>
                           <span className="[font-family:'Quicksand',Helvetica] font-semibold text-[#ef7d4f] text-base">
-                            {`${session.startTime} - ${session.endTime}`}
+                            {formatTime(rdv.date_heure, rdv.duree)}
                           </span>
+                          <span className="ml-2 text-xs text-[#75746f]">{rdv.type}</span>
                         </div>
                         <h3 className="[font-family:'Quicksand',Helvetica] font-medium text-black text-lg">
-                          {session.title}
+                          {rdv.notes || "Rendez-vous"}
                         </h3>
                         <p className="[font-family:'Quicksand',Helvetica] text-[#75746f] text-sm">
-                          {session.description}
+                          Statut : {rdv.statut}
                         </p>
                       </div>
                     ))}

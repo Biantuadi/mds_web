@@ -22,11 +22,30 @@ export const ModulesList = () => {
     }
   }, [user]);
 
+  // Associer chaque module à sa progression (si assigné à la patiente)
+  const modulesWithProgress = modules.map((mod: any) => {
+    const mp = modulePatient.find((mp: any) => mp.module_id === mod.id);
+    return {
+      ...mod,
+      progression: mp ? mp.progression : 0,
+      derniere_activite: mp ? mp.derniere_activite : null,
+    };
+  });
+
+  // Filtrage recherche et modules terminés
+  const filteredModules = modulesWithProgress
+    .filter(m =>
+      m.titre.toLowerCase().includes(search.toLowerCase()) &&
+      (showCompleted ? m.progression >= 100 : true)
+    );
+
   return (
     <div className="min-h-screen flex flex-col bg-[#fffbf1]">
       {/* Header */}
       <header className="flex items-center justify-between w-full px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md">
-        <div className="font-bold text-lg text-black font-[Quicksand]">BONJOUR PAULINE</div>
+        <div className="font-bold text-lg text-black font-[Quicksand]">
+          {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"}
+        </div>
         <div className="flex flex-col items-center">
           <div className="text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
           <img src="/home_imgs/logo-arc.svg" alt="Logo arc" className="h-12 mt-2" />
@@ -73,24 +92,28 @@ export const ModulesList = () => {
 
         {/* Liste des modules */}
         <div className="divide-y divide-[#ececec]">
-          {modules
-            .filter(m => m.title.toLowerCase().includes(search.toLowerCase()))
-            .map(module => (
-              <div
-                key={module.id}
-                className="flex items-center py-6 cursor-pointer hover:bg-[#f9f6f2] transition group"
-                onClick={() => navigate(`/module/${module.id}`)}
-              >
-                <img src={module.img} alt={module.title} className="w-16 h-16 rounded-xl object-cover mr-6 border border-[#ececec]" />
-                <div className="flex-1 text-center">
-                  <div className="text-lg font-[Quicksand] font-semibold group-hover:text-[#ef7d4f]">{module.title}</div>
-                  <div className="flex items-center justify-center gap-2 text-[#75746f] mt-1">
-                    <TimerIcon className="w-5 h-5" />
-                    <span>{module.duration}</span>
-                  </div>
+          {filteredModules.length === 0 && (
+            <div className="text-[#75746f] text-center py-8">Aucun module trouvé</div>
+          )}
+          {filteredModules.map(module => (
+            <div
+              key={module.id}
+              className="flex items-center py-6 cursor-pointer hover:bg-[#f9f6f2] transition group"
+              onClick={() => navigate(`/module/${module.id}`)}
+            >
+              <img src={module.miniature || "/images/default-module.png"} alt={module.titre} className="w-16 h-16 rounded-xl object-cover mr-6 border border-[#ececec]" />
+              <div className="flex-1 text-center">
+                <div className="text-lg font-[Quicksand] font-semibold group-hover:text-[#ef7d4f]">{module.titre}</div>
+                <div className="flex items-center justify-center gap-2 text-[#75746f] mt-1">
+                  <TimerIcon className="w-5 h-5" />
+                  <span>{module.duree_estimee ? `${module.duree_estimee} min` : ""}</span>
+                  {module.progression > 0 && (
+                    <span className="ml-4 text-xs text-[#ef7d4f]">{module.progression}% complété</span>
+                  )}
                 </div>
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       </div>
 

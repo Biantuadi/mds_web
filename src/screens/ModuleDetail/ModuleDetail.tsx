@@ -27,7 +27,7 @@ export const ModuleDetail = () => {
         </div>
         <div className="flex items-center gap-6">
           <CalendarIcon className="w-6 h-6 cursor-pointer" onClick={() => navigate('/appointments')} />
-          <BookIcon className="w-6 h-6 cursor-pointer" />
+          <BookIcon className="w-6 h-6 cursor-pointer" onClick={() => navigate('/modules')} />
           <UserIcon className="w-6 h-6 cursor-pointer" />
         </div>
       </header>
@@ -35,21 +35,27 @@ export const ModuleDetail = () => {
       {/* Fil d'ariane */}
       <div className="flex items-center gap-2 px-8 mt-4 text-sm text-[#75746f]">
         <button onClick={() => navigate(-1)} className="text-2xl text-[#ef7d4f] font-bold">&#60;</button>
-        <span>Accueil &gt; Modules &gt; Arbre de Vie #345</span>
+        <span>
+          Accueil &gt; Modules &gt; {module ? module.titre : ""}
+        </span>
       </div>
 
       {/* Image du module */}
       <div className="w-full max-w-4xl mx-auto mt-4 rounded-t-3xl overflow-hidden shadow-md">
-        <img src="/img/arbre.jpg" alt="Arbre de Vie" className="w-full h-64 object-cover" />
+        <img
+          src={module?.miniature || "/images/default-module.png"}
+          alt={module?.titre}
+          className="w-full h-64 object-cover"
+        />
       </div>
 
       {/* Titre et sous-titre */}
       <div className="text-center mt-6">
-        <h1 className="text-3xl font-bold">Arbre de Vie</h1>
-        <p className="italic text-lg mt-2">"Module se focalisant sur les racines de ses ancêtres"</p>
+        <h1 className="text-3xl font-bold">{module?.titre}</h1>
+        <p className="italic text-lg mt-2">{module?.description}</p>
       </div>
 
-      {/* Contenu */}
+      {/* Contenu dynamique */}
       <div className="max-w-4xl mx-auto mt-6 px-4">
         {contenuBlocs
           .sort((a, b) => a.ordre - b.ordre)
@@ -65,7 +71,6 @@ export const ModuleDetail = () => {
               );
             }
             if (bloc.bloc_id === 4) { // liste
-              // On suppose que chaque élément est séparé par un retour à la ligne
               return (
                 <ul key={idx} className="mb-4 list-disc pl-6 text-[#75746f]">
                   {bloc.contenu.split('\n').map((item: string, i: number) =>
