@@ -35,7 +35,7 @@ export const Appointments = (): JSX.Element => {
 
   return (
     <div className="bg-transparent flex flex-row justify-center ">
-      <div className="bg-[url(/backgrounds-a.svg)] bg-[100%_100%] w-[100vw] min-h-screen bg-cover bg-center bg-no-repeat">
+      <div className="bg-[url(/bg_modules_list.png)] bg-[100%_100%] w-[100vw] min-h-screen bg-cover bg-center bg-no-repeat">
         <div className="flex flex-col w-full items-center relative">
           {/* Header */}
           <div className="relative w-full h-[157px]">

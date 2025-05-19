@@ -43,7 +43,7 @@ export const ModuleDetail = () => {
     <div className="min-h-screen flex flex-col bg-[#fffbf1]">
       {/* Header */}
       <header className="flex items-center justify-between w-full px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md">
-        <div className="font-bold text-lg text-black font-[Quicksand]">BONJOUR PAULINE</div>
+        <div className="font-bold text-lg text-black font-[Quicksand]"> {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"} </div>
         <div className="flex flex-col items-center">
           <div className="text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
           <img src="/home_imgs/logo-arc.svg" alt="Logo arc" className="h-12 mt-2" />

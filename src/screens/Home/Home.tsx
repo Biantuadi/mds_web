@@ -6,44 +6,9 @@ import {
   UserIcon,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { dataService } from "../../services/dataService";
-
-// Data for upcoming appointments
-const upcomingAppointments = [
-  {
-    date: "24 janvier",
-    time: "10:00 - 11:00",
-    title: "Point mensuel",
-    description:
-      "Revoir avec Laurène les derniers modules + compléter fiche de résultats afin d'établie les plus grands axes d'améliorations. Il faudra préparer en amont une liste de plusiuers",
-    color: "#7b677a",
-  },
-  {
-    date: "27 janvier",
-    time: "14:00 - 14:30",
-    title: "Exercice oral",
-    description:
-      "Petit entrainement sur l'aisance à s'exprimer devant un certain",
-    color: "#ef7d4f",
-  },
-  {
-    date: "02 Mars",
-    time: "09:15 - 12:00",
-    title: "Bilan annuel",
-    description:
-      "Dans le cadre de la procédure, nous allons procéder à la reco",
-    color: "#1c371c",
-  },
-  {
-    date: "02 Mars",
-    time: "09:15 - 12:00",
-    title: "Bilan annuel",
-    description:
-      "Dans le cadre de la procédure, nous allons procéder à la reco",
-    color: "#1c371c",
-  },
-];
+import "./Home.scss";
 
 export const Home = (): JSX.Element => {
   const navigate = useNavigate();
@@ -97,15 +62,15 @@ export const Home = (): JSX.Element => {
   return (
     <div className="min-h-screen min-w-full bg-[#fffbf1] flex flex-col">
       {/* HEADER */}
-      <header className="flex items-center justify-between w-full px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md">
-        <div className="font-bold text-lg text-black font-[Quicksand]">
+      <header className="flex flex-col md:flex-row items-center justify-between w-full px-4 md:px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md gap-2 md:gap-0">
+        <div className="font-bold text-base md:text-lg text-black font-[Quicksand]">
           {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"}
         </div>
         <div className="flex flex-col items-center">
-          <div className="text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
-          <img src="/home_imgs/logo-arc.svg" alt="Logo arc" className="h-12 mt-2" />
+          <div className="text-xl md:text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
+          <img src="/home_imgs/logo-arc.svg" alt="Logo arc" className="h-10 md:h-12 mt-2" />
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 md:gap-6">
           <CalendarIcon className="w-6 h-6 cursor-pointer" onClick={() => navigate('/appointments')} />
           <BookIcon className="w-6 h-6 cursor-pointer" onClick={() => navigate('/modules')} />
           <UserIcon className="w-6 h-6 cursor-pointer" />
@@ -113,8 +78,8 @@ export const Home = (): JSX.Element => {
       </header>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 flex flex-col justify-center items-center w-full bg-[url(/backgrounds-a.svg)] bg-[100%_100%] bg-no-repeat bg-cover bg-center pb-4">
-        <div className="flex flex-row gap-8 w-full max-w-[1400px] mx-auto mt-8 flex-1">
+      <main className="flex-1 flex flex-col items-center w-full bg-[url(/backgrounds-a.svg)] bg-cover bg-center pb-4">
+        <div id="home-content" className="flex flex-row gap-8 w-full max-w-[1400px] mx-auto mt-8 flex-1 px-2 md:px-8">
           {/* PROCHAINS RDV */}
           <div className="flex flex-col w-[350px] h-full">
             <div className="bg-[#ef7d4f] rounded-br-2xl rounded-tl-2xl px-6 py-2 text-white font-bold text-xl font-[Reef-Bold] shadow-md">PROCHAINS RDV</div>
@@ -142,8 +107,8 @@ export const Home = (): JSX.Element => {
           </div>
 
           {/* PROGRESSION + MODULE EN COURS */}
-          <div className="flex flex-1 gap-8 items-stretch">
-            <div className="flex flex-col items-center justify-center flex-1 min-w-[320px]">
+          <div className="flex flex-col md:flex-row flex-1 gap-8 items-stretch">
+            <div className="flex flex-col items-center justify-center flex-1 min-w-[220px]">
               <div className="bg-[#ef7d4f] rounded-br-2xl rounded-tl-2xl px-6 py-2 text-white font-bold text-xl font-[Reef-Bold] shadow-md mb-2">PROGRESSION</div>
               <div className="bg-[#fffbf1] rounded-2xl shadow-md flex flex-col items-center justify-center p-6 w-full">
                 <div className="relative flex items-center justify-center mb-2">
@@ -160,7 +125,7 @@ export const Home = (): JSX.Element => {
                 <div className="text-[#ef7d4f] text-2xl font-semibold font-[Quicksand]">Modules terminés</div>
               </div>
             </div>
-            <div className="flex flex-col items-center justify-center flex-1 min-w-[320px]">
+            <div className="flex flex-col items-center justify-center flex-1 min-w-[220px] mt-6 md:mt-0">
               <div className="flex flex-row items-center gap-2 mb-2">
                 <ChevronRightIcon className="w-8 h-8 text-[#1c371c]" />
                 <div className="bg-[#ef7d4f] rounded-br-2xl rounded-tl-2xl px-6 py-2 text-white font-bold text-xl font-[Reef-Bold] shadow-md">Module en cours</div>
@@ -188,14 +153,14 @@ export const Home = (): JSX.Element => {
         </div>
 
         {/* DERNIERS MODULES CONSULTÉS */}
-        <div className="w-full max-w-[1400px] mx-auto mt-8 flex-shrink-0">
-          <div className="bg-[#ef7d4f] rounded-br-2xl rounded-tl-2xl px-6 py-2 text-white font-bold text-xl font-[Reef-Bold] shadow-md inline-block mb-2">DERNIERS MODULES CONSULTÉS</div>
-          <div className="bg-[#fffbf1] rounded-2xl shadow-md p-4">
+        <div className="w-full max-w-[1400px] mx-auto mt-8 flex-shrink-0 px-2 md:px-8">
+          <div className="bg-[#ef7d4f] rounded-br-2xl rounded-tl-2xl px-4 md:px-6 py-2 text-white font-bold text-lg md:text-xl font-[Reef-Bold] shadow-md inline-block mb-2">DERNIERS MODULES CONSULTÉS</div>
+          <div className="bg-[#fffbf1] rounded-2xl shadow-md p-2 md:p-4">
             <div className="flex items-center justify-end gap-2 mb-2">
-              <span className="text-[#4b4a47] text-base cursor-pointer" onClick={() => navigate('/modules')}>Voir tout les modules</span>
+              <span className="text-[#4b4a47] text-sm md:text-base cursor-pointer" onClick={() => navigate('/modules')}>Voir tout les modules</span>
               <ChevronRightIcon className="w-6 h-6 text-[#ef7d4f]" />
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-2">
+            <div className="flex gap-3 md:gap-4 overflow-x-auto pb-2">
               {modulesRecents.map((module, idx) => {
                 // Trouve la progression pour ce module
                 const mp = modulePatient.find(mp => mp.module_id === module.id);
@@ -227,7 +192,7 @@ export const Home = (): JSX.Element => {
       </main>
 
       {/* FOOTER */}
-      <footer className="w-full bg-[#fffbf1] py-2 text-center text-black text-sm font-[Quicksand]">Les Audacieuses Académie Ⓒ</footer>
+      <footer className="w-full bg-[#fffbf1] py-2 text-center text-black text-xs md:text-sm font-[Quicksand]">Les Audacieuses Académie Ⓒ</footer>
     </div>
   );
 };
