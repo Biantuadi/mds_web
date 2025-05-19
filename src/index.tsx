@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { Login } from "./screens/Login";
 import { Home } from "./screens/Home/Home";
 import { Appointments } from "./screens/Appointments/Appointments";
+import { ModuleDetail } from "./screens/ModuleDetail/ModuleDetail";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { store, persistor } from "./store";
 
@@ -29,6 +30,14 @@ createRoot(document.getElementById("app") as HTMLElement).render(
               element={
                 <ProtectedRoute>
                   <Appointments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/module/:id"
+              element={
+                <ProtectedRoute>
+                  <ModuleDetail />
                 </ProtectedRoute>
               }
             />

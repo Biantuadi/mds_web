@@ -48,12 +48,12 @@ const upcomingAppointments = [
 
 // Data for modules
 const modules = [
-  { title: "Arbre de vie", duration: "1h" },
-  { title: "Les autres et moi", duration: "45m" },
-  { title: "La portée réelle", duration: "2h" },
-  { title: "Les autres et moi", duration: "30m" },
-  { title: "En avant ça grimpe", duration: "1h45" },
-  { title: "Nom du module", duration: "1h45" },
+  { id: 1, title: "Arbre de vie", duration: "1h" },
+  { id: 2, title: "Les autres et moi", duration: "45m" },
+  { id: 3, title: "La portée réelle", duration: "2h" },
+  { id: 4, title: "Les autres et moi", duration: "30m" },
+  { id: 5, title: "En avant ça grimpe", duration: "1h45" },
+  { id: 6, title: "Nom du module", duration: "1h45" },
 ];
 
 export const Home = (): JSX.Element => {
@@ -287,7 +287,8 @@ export const Home = (): JSX.Element => {
                         {modules.map((module, index) => (
                           <Card
                             key={index}
-                            className="inline-flex flex-col items-start justify-center relative self-stretch flex-[0_0_auto] bg-[#fffbf1] rounded-2xl overflow-hidden shadow-frame-drop-shadow"
+                            className="inline-flex flex-col items-start justify-center relative self-stretch flex-[0_0_auto] bg-[#fffbf1] rounded-2xl overflow-hidden shadow-frame-drop-shadow cursor-pointer"
+                            onClick={() => navigate(`/module/${module.id}`)}
                           >
                             <CardContent className="flex flex-col w-[284.5px] items-center gap-1.5 pt-0 pb-1 px-0 relative flex-1 grow">
                               <img
