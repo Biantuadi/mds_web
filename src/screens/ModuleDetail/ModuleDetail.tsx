@@ -41,14 +41,16 @@ export const ModuleDetail = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fffbf1]">
-      {/* Header */}
-      <header className="flex items-center justify-between w-full px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md">
-        <div className="font-bold text-lg text-black font-[Quicksand]"> {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"} </div>
-        <div className="flex flex-col items-center">
-          <div className="text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
-          <img src="/home_imgs/logo-arc.svg" alt="Logo arc" className="h-12 mt-2" />
+       {/* HEADER */}
+       <header className="flex flex-col md:flex-row items-center justify-between w-full px-4 md:px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md gap-2 md:gap-0">
+        <div className="font-bold text-base md:text-lg text-black font-[Quicksand]">
+          {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"}
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex flex-col items-center">
+          <div className="text-xl md:text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
+          <img src="/home_imgs/logo-arc.svg" alt="Logo arc" className="h-10 md:h-12 mt-2" />
+        </div>
+        <div className="flex items-center gap-4 md:gap-6">
           <CalendarIcon className="w-6 h-6 cursor-pointer" onClick={() => navigate('/appointments')} />
           <BookIcon className="w-6 h-6 cursor-pointer" onClick={() => navigate('/modules')} />
           <UserIcon className="w-6 h-6 cursor-pointer" />

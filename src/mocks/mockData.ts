@@ -124,7 +124,6 @@ export const mockRendezVous = [
   { id: 2, patient_id: 2, psychologue_id: 1, date_heure: '2024-03-13T14:00:00Z', duree: 60, type: 'visio', notes: 'Bilan de mi-parcours', statut: 'planifié', date_creation: '2024-03-02T09:00:00Z' },
 ]; 
 
-// Ajoute cette fonction pour simuler la validation d'un module
 export function validateModuleMock(moduleId: number, patientId: number) {
     const mp = mockModulePatient.find(
       (mp) => mp.module_id === moduleId && mp.patient_id === patientId
