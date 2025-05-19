@@ -1,90 +1,41 @@
 # Guide d'Utilisation - MyDigital Project
 
-## 🏠 Page d'Accueil
-
-### Navigation
-- La barre de navigation en haut de la page contient :
-  - Un message de bienvenue personnalisé
-  - Le logo du site au centre
-  - Des boutons d'action à droite
-
-### Sections Principales
-
-#### 1. Progression
-- Un indicateur visuel circulaire montre votre progression globale
-- Le pourcentage de complétion est affiché au centre
-- Cette section vous permet de suivre votre avancement dans le programme
-
-#### 2. Module en Cours
-- Affiche le module que vous êtes en train de suivre
-- Inclut :
-  - Une image représentative
-  - Le titre du module
-  - La durée estimée
-  - Un indicateur visuel sur le côté droit
-
-#### 3. Rendez-vous
-- Liste vos prochains rendez-vous
-- Chaque rendez-vous affiche :
-  - La date et l'heure
-  - Les détails de la session
-  - Le statut du rendez-vous
-
-#### 4. Modules Récents
-- Présente les modules que vous avez récemment consultés
-- Caractéristiques :
-  - Affichage en grille horizontale
-  - Navigation par défilement
-  - Chaque module montre :
-    - Une image de couverture
-    - Le titre
-    - La durée
-  - Effet de survol pour une meilleure interaction
-
-## 🎨 Design et Interface
-
-- Interface moderne avec un fond beige clair (#fffbf1)
-- Utilisation d'ombres douces pour la profondeur
-- Palette de couleurs :
-  - Orange principal : #ef7d4f
-  - Vert : #4A5D4A
-  - Fond : #fffbf1
-- Design responsive adapté à tous les écrans
-
-## 📱 Fonctionnalités
-
-### Navigation
-- Défilement fluide
-- Barres de défilement personnalisées
-- Transitions douces
-- Effets de survol interactifs
-
-### Organisation du Contenu
-- Structure en grille pour une meilleure lisibilité
-- Sections clairement délimitées
-- Hiérarchie visuelle claire avec des titres distinctifs
-
-## 💡 Conseils d'Utilisation
-
-1. **Suivi de Progression**
-   - Consultez régulièrement l'indicateur de progression
-   - Suivez les modules dans l'ordre recommandé
-
-2. **Gestion des Rendez-vous**
-   - Vérifiez régulièrement la section des rendez-vous
-   - Notez les dates importantes
-
-3. **Exploration des Modules**
-   - Utilisez la section "Modules Récents" pour reprendre votre apprentissage
-   - Profitez de la navigation horizontale pour explorer rapidement
-
-## 🔧 Support Technique
-
-En cas de problème ou de question :
-- Vérifiez votre connexion internet
-- Assurez-vous d'utiliser un navigateur à jour
-- Contactez le support technique si nécessaire
-
----
-
-*Ce guide est régulièrement mis à jour pour refléter les nouvelles fonctionnalités et améliorations du site.*
+Bienvenue sur l’application Les Audacieuses Académie, dédiée à l’accompagnement des femmes dans leur reconversion professionnelle. Ce guide vous explique comment naviguer et utiliser toutes les fonctionnalités de la plateforme.
+1. Connexion et Accueil
+Accueil personnalisé : Dès la connexion, vous êtes accueillie par votre prénom.
+Navigation rapide : Accédez à vos rendez-vous, modules et profil via les icônes en haut à droite.
+2. Dashboard (Page d’Accueil)
+a. Prochains Rendez-vous
+Retrouvez vos 3 prochains rendez-vous avec votre psychologue (date, heure, type, notes).
+Cliquez sur la carte ou l’icône calendrier pour voir la liste complète de vos rendez-vous.
+b. Progression
+Visualisez votre progression : nombre de modules terminés sur le total de modules assignés.
+Un cercle de progression vous indique votre avancement global.
+c. Module en cours
+Accédez rapidement au module que vous êtes en train de suivre.
+Cliquez sur la carte pour ouvrir le détail du module.
+d. Derniers modules consultés
+Retrouvez les 5 derniers modules sur lesquels vous avez travaillé.
+Un badge “Terminé” s’affiche sur les modules complétés à 100%.
+Cliquez sur un module pour accéder à son contenu détaillé.
+3. Liste des modules
+Accédez à la liste complète de vos modules via l’icône “livre” ou le bouton “Voir tous les modules”.
+Utilisez la barre de recherche pour filtrer les modules par titre.
+Activez le switch “Afficher les modules terminés” pour ne voir que les modules complétés.
+Un badge “Terminé” s’affiche sur les modules finalisés.
+Cliquez sur un module pour accéder à son contenu détaillé.
+4. Détail d’un module
+Retrouvez le titre, la description, l’image et tous les contenus pédagogiques du module (textes, listes, citations…).
+Suivez les consignes et exercices proposés.
+Cliquez sur “Valider le module” une fois terminé : le module passe à 100% de progression et le badge “Terminé” s’affiche dans vos listes.
+5. Rendez-vous
+Consultez la liste de tous vos rendez-vous passés et à venir.
+Les informations affichées : date, heure, type (visio, présentiel, téléphone), notes, statut.
+Un message s’affiche si aucun rendez-vous n’est planifié.
+6. Conseils d’utilisation
+Responsive : L’application s’adapte à tous les écrans (ordinateur, tablette, mobile).
+Navigation fluide : Utilisez les boutons et liens pour passer d’une section à l’autre.
+Mise à jour automatique : Les données (progression, rendez-vous, etc.) se mettent à jour en temps réel après chaque action.
+7. Support
+En cas de problème technique, contactez le support via l’adresse fournie par votre psychologue ou l’établissement.
+Bon parcours sur Les Audacieuses Académie !

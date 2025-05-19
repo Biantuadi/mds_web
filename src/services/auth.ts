@@ -1,15 +1,14 @@
-import { User } from '../types';
 
 // Mock user data for testing
 const MOCK_USERS = [
   {
     id: '1',
-    username: 'test',
+    username: 'marie',
     password: 'test123'
   }
 ];
 
-export const loginUser = async (username: string, password: string): Promise<{ token: string; user: User }> => {
+export const loginUser = async (username: string, password: string): Promise<{ token: string; user: any }> => {
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 1000));
 
