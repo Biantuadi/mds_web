@@ -8,6 +8,7 @@ import {
 import { Badge } from "../../components/ui/badge";
 import { Card, CardContent } from "../../components/ui/card";
 import { ScrollArea, ScrollBar } from "../../components/ui/scroll-area";
+import { useNavigate } from "react-router-dom";
 
 // Data for upcoming appointments
 const upcomingAppointments = [
@@ -56,6 +57,8 @@ const modules = [
 ];
 
 export const Home = (): JSX.Element => {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-transparent flex flex-row justify-center w-full">
       <div className="bg-[url(/backgrounds-a.svg)] bg-[100%_100%] w-[1440px] h-[1024px]">
@@ -74,7 +77,7 @@ export const Home = (): JSX.Element => {
 
                   <div className="flex w-[242px] items-center justify-end gap-[30px] relative self-stretch">
                     <div className="flex items-center justify-between px-3.5 py-0 relative flex-1 self-stretch grow">
-                      <div className="flex flex-col items-center justify-center gap-2.5 relative flex-1 self-stretch grow">
+                      <div className="flex flex-col items-center justify-center gap-2.5 relative flex-1 self-stretch grow cursor-pointer" onClick={() => navigate('/appointments')}>
                         <CalendarIcon className="w-6 h-6" />
                       </div>
 
@@ -135,7 +138,7 @@ export const Home = (): JSX.Element => {
                 </div>
 
                 <Card className="flex flex-col items-end p-2 relative flex-1 self-stretch w-full grow bg-[#fffbf1] rounded-2xl shadow-frame-drop-shadow">
-                  <div className="inline-flex flex-col items-end relative flex-[0_0_auto]">
+                  <div className="inline-flex flex-col items-end relative flex-[0_0_auto] cursor-pointer" onClick={() => navigate('/appointments')}>
                     <ChevronRightIcon className="w-6 h-6" />
                   </div>
 
