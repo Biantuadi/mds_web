@@ -9,6 +9,7 @@ import { Appointments } from "./screens/Appointments/Appointments";
 import { ModuleDetail } from "./screens/ModuleDetail/ModuleDetail";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { store, persistor } from "./store";
+import { ModulesList } from "./screens/ModulesList";
 
 createRoot(document.getElementById("app") as HTMLElement).render(
   <StrictMode>
@@ -38,6 +39,15 @@ createRoot(document.getElementById("app") as HTMLElement).render(
               element={
                 <ProtectedRoute>
                   <ModuleDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route
+              path="/modules"
+              element={
+                <ProtectedRoute>
+                  <ModulesList />
                 </ProtectedRoute>
               }
             />

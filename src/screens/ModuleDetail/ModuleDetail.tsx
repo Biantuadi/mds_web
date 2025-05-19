@@ -1,161 +1,79 @@
-import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeftIcon, TimerIcon, BookIcon } from "lucide-react";
-import { Card, CardContent } from "../../components/ui/card";
-import { ScrollArea } from "../../components/ui/scroll-area";
-import { mockModules } from "../../data/mockData";
+import { useNavigate } from "react-router-dom";
+import { CalendarIcon, BookIcon, UserIcon } from "lucide-react";
 
-export const ModuleDetail = (): JSX.Element => {
-  const { id } = useParams();
+export const ModuleDetail = () => {
   const navigate = useNavigate();
-  const module = mockModules.find((m) => m.id === Number(id));
-
-  if (!module) {
-    return <div>Module not found</div>;
-  }
-
-  const lessons = [
-    {
-      id: 1,
-      title: "Introduction",
-      duration: "15min",
-      isCompleted: true,
-    },
-    {
-      id: 2,
-      title: "Les racines",
-      duration: "30min",
-      isCompleted: false,
-    },
-    {
-      id: 3,
-      title: "Le tronc",
-      duration: "45min",
-      isCompleted: false,
-    },
-    {
-      id: 4,
-      title: "Les branches",
-      duration: "1h",
-      isCompleted: false,
-    },
-  ];
 
   return (
-    <div className="bg-[#fffbf1] min-h-screen">
+    <div className="min-h-screen flex flex-col bg-[#fffbf1]">
       {/* Header */}
-      <header className="relative bg-[#fffbf1] h-[157px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)]">
-        <div className="flex h-20 items-center justify-between px-8 py-0">
-          <div className="flex items-center gap-4">
-            <ChevronLeftIcon 
-              className="w-6 h-6 cursor-pointer text-[#4A5D4A]" 
-              onClick={() => navigate(-1)} 
-            />
-            <h1 className="font-['Quicksand'] font-bold text-[#4A5D4A] text-lg">
-              {module.titre}
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-8">
-            <BookIcon className="w-6 h-6 text-[#4A5D4A]" />
-          </div>
+      <header className="flex items-center justify-between w-full px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md">
+        <div className="font-bold text-lg text-black font-[Quicksand]">BONJOUR PAULINE</div>
+        <div className="flex flex-col items-center">
+          <div className="text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
+          <img src="/home_imgs/logo-arc.svg" alt="Logo arc" className="h-12 mt-2" />
         </div>
-
-        {/* Logo Section */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 top-12">
-          <div className="text-center">
-            <h2 className="font-['Reef'] font-bold text-[#4A5D4A] text-2xl tracking-[2.4px] mb-2">
-              LES AUDACIEUSES ACADEMIE
-            </h2>
-            <div className="relative w-[102px] h-[96px] mx-auto">
-              <img
-                className="absolute w-full h-[63px] top-0"
-                alt="Ellipse"
-                src="/home_imgs/ellipse-8.svg"
-              />
-              <img
-                className="absolute w-24 h-[60px] top-4"
-                alt="Logo arc"
-                src="/home_imgs/logo-arc.svg"
-              />
-            </div>
-          </div>
+        <div className="flex items-center gap-6">
+          <CalendarIcon className="w-6 h-6 cursor-pointer" onClick={() => navigate('/appointments')} />
+          <BookIcon className="w-6 h-6 cursor-pointer" />
+          <UserIcon className="w-6 h-6 cursor-pointer" />
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-[1200px] mx-auto px-8 pt-16 pb-12">
-        <div className="flex gap-8">
-          {/* Module Card */}
-          <Card className="flex-1 bg-white rounded-2xl shadow-[0px_4px_20px_0px_rgba(0,0,0,0.05)] overflow-hidden">
-            <div className="relative h-[300px]">
-              <img
-                src="/home_imgs/vector-7-1.png"
-                alt={module.titre}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
-            </div>
-            <CardContent className="p-8 text-center">
-              <h2 className="font-['Quicksand'] text-[32px] font-semibold text-[#ef7d4f] mb-6">
-                {module.titre}
-              </h2>
-              <div className="flex items-center justify-center gap-4">
-                <TimerIcon className="w-8 h-8 text-[#4A5D4A]" />
-                <span className="font-['Quicksand'] text-2xl text-[#4A5D4A]">2h30</span>
-              </div>
-            </CardContent>
-          </Card>
+      {/* Fil d'ariane */}
+      <div className="flex items-center gap-2 px-8 mt-4 text-sm text-[#75746f]">
+        <button onClick={() => navigate(-1)} className="text-2xl text-[#ef7d4f] font-bold">&#60;</button>
+        <span>Accueil &gt; Modules &gt; Arbre de Vie #345</span>
+      </div>
 
-          {/* Progress Card */}
-          <Card className="w-[332px] bg-white rounded-2xl shadow-[0px_4px_20px_0px_rgba(0,0,0,0.05)] p-8 flex flex-col items-center justify-center">
-            <div className="relative w-[166px] h-[166px] mb-6">
-              <img
-                className="w-full h-full"
-                alt="Progress"
-                src="/home_imgs/2.svg"
-              />
-              <div className="absolute inset-0 flex items-center justify-center font-['Quicksand'] text-4xl font-semibold text-[#ef7d4f]">
-                1/4
-              </div>
-            </div>
-            <h3 className="font-['Quicksand'] text-[32px] font-semibold text-[#ef7d4f] text-center">
-              Leçons terminées
-            </h3>
-          </Card>
+      {/* Image du module */}
+      <div className="w-full max-w-4xl mx-auto mt-4 rounded-t-3xl overflow-hidden shadow-md">
+        <img src="/img/arbre.jpg" alt="Arbre de Vie" className="w-full h-64 object-cover" />
+      </div>
+
+      {/* Titre et sous-titre */}
+      <div className="text-center mt-6">
+        <h1 className="text-3xl font-bold">Arbre de Vie</h1>
+        <p className="italic text-lg mt-2">"Module se focalisant sur les racines de ses ancêtres"</p>
+      </div>
+
+      {/* Contenu */}
+      <div className="max-w-4xl mx-auto mt-6 px-4">
+        <p className="mb-4 text-justify">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. <span className="text-[#ef7d4f] font-semibold">Pellentesque sit amet</span> sapien fringilla, mattis ligula consectetur, ultrices mauris.
+        </p>
+        <p className="mb-4 text-justify">
+          Nullam et interdum justo. Proin eleifend metus ac lacus sodales, vel egestas metus auctor. Praesent turpis purus, venenatis id maximus nec, cursus nec eros. Nullam dapibus euismod porttitor. Mauris varius ipsum ut placerat blandit. Sed venenatis orci pretium magna interdum, in feugiat ipsum interdum. Nulla imperdiet ultricies tortor. Vestibulum semper ex orci, in viverra lacus iaculis et. Aenean a rhoncus leo, vitae hendrerit dolor. Morbi non scelerisque dolor, sed scelerisque nulla. Aenean mollis viverra arcu, in maximus leo lacinia in. Proin malesuada at dui vel lobortis. Donec non nunc velit. In ac tempus ipsum, vel ullamcorper est. Vestibulum gravida elementum velit, ac pretium justo viverra at. Sed purus enim, imperdiet nec justo vitae, accumsan congue mauris.
+        </p>
+        <p className="mb-4 text-justify">
+          Maecenas vitae mattis tellus. Nullam <span className="font-bold">quis imperdiet augue</span>. Vestibulum auctor ornare leo, non suscipit magna interdum eu.
+        </p>
+        <ul className="mb-4 list-none">
+          <li className="flex items-center gap-2"><span className="text-[#75746f]">&#9632;</span> Sapien fringilla</li>
+          <li className="flex items-center gap-2"><span className="text-[#75746f]">&#9632;</span> Pellentesque sit amet sapien</li>
+          <li className="flex items-center gap-2"><span className="text-[#75746f]">&#9632;</span> Aliquam</li>
+          <li className="flex items-center gap-2"><span className="text-[#75746f]">&#9632;</span> Non suscipit magna interdum eu</li>
+          <li className="flex items-center gap-2"><span className="text-[#75746f]">&#9632;</span> Maximus ante fermentum</li>
+        </ul>
+        <ul className="mb-4 list-disc pl-6 text-[#75746f]">
+          <li>Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales.</li>
+        </ul>
+        <div className="bg-[#eaeaea] rounded-xl px-4 py-2 text-[#75746f] mb-4">
+          Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu.
         </div>
+      </div>
 
-        {/* Lessons List */}
-        <Card className="mt-8 bg-white rounded-2xl shadow-[0px_4px_20px_0px_rgba(0,0,0,0.05)]">
-          <CardContent className="p-8">
-            <ScrollArea className="h-[400px] pr-4">
-              <div className="flex flex-col gap-4">
-                {lessons.map((lesson) => (
-                  <div
-                    key={lesson.id}
-                    className="flex items-center justify-between p-6 bg-[#fffbf1] rounded-2xl cursor-pointer hover:bg-[#fff6e6] transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`w-3 h-3 rounded-full ${
-                          lesson.isCompleted ? "bg-[#ef7d4f]" : "bg-[#D9D9D9]"
-                        }`}
-                      />
-                      <span className="font-['Quicksand'] text-lg font-medium text-[#4A5D4A]">
-                        {lesson.title}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-[#4A5D4A]">
-                      <TimerIcon className="w-6 h-6" />
-                      <span className="font-['Quicksand'] text-lg">{lesson.duration}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </CardContent>
-        </Card>
-      </main>
+      {/* Bouton */}
+      <div className="flex justify-end max-w-4xl mx-auto mt-8 px-4">
+        <button className="bg-[#ef7d4f] text-white rounded-xl px-8 py-3 font-semibold shadow-md hover:bg-[#d96a3b] transition">
+          Valider le module
+        </button>
+      </div>
+
+      {/* Footer */}
+      <footer className="w-full bg-[#fffbf1] py-2 text-center text-black text-sm font-[Quicksand] mt-8">
+        Les Audacieuses Académie Ⓒ
+      </footer>
     </div>
   );
-};
+}; 

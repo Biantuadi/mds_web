@@ -1,5 +1,4 @@
-import React from "react";
-import { CalendarIcon, ChevronLeftIcon, TimerIcon } from "lucide-react";
+import { CalendarIcon, ChevronLeftIcon } from "lucide-react";
 import { Card, CardContent } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
 import { ScrollArea } from "../../components/ui/scroll-area";
@@ -7,8 +6,8 @@ import { mockNextSessions } from "../../data/mockData";
 
 export const Appointments = (): JSX.Element => {
   return (
-    <div className="bg-transparent flex flex-row justify-center w-full">
-      <div className="bg-[url(/backgrounds-a.svg)] bg-[100%_100%] w-[1440px] min-h-screen">
+    <div className="bg-transparent flex flex-row justify-center ">
+      <div className="bg-[url(/backgrounds-a.svg)] bg-[100%_100%] w-[100vw] min-h-screen bg-cover bg-center bg-no-repeat">
         <div className="flex flex-col w-full items-center relative">
           {/* Header */}
           <div className="relative w-full h-[157px]">
