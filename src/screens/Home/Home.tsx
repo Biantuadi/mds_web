@@ -45,16 +45,6 @@ const upcomingAppointments = [
   },
 ];
 
-// Data for modules
-const modules = [
-  { id: 1, title: "Arbre de vie", duration: "1h" },
-  { id: 2, title: "Les autres et moi", duration: "45m" },
-  { id: 3, title: "La portée réelle", duration: "2h" },
-  { id: 4, title: "Les autres et moi", duration: "30m" },
-  { id: 5, title: "En avant ça grimpe", duration: "1h45" },
-  { id: 6, title: "Nom du module", duration: "1h45" },
-];
-
 export const Home = (): JSX.Element => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
@@ -90,9 +80,11 @@ export const Home = (): JSX.Element => {
 
   // Rendez-vous à venir
   const rdvAVenir = [...rendezVous]
-    .filter(rdv => new Date(rdv.date_heure) > new Date())
-    .sort((a, b) => new Date(a.date_heure).getTime() - new Date(b.date_heure).getTime())
-    .slice(0, 3);
+  .filter(rdv => new Date(rdv.date_heure) > new Date())
+  .sort((a, b) => new Date(a.date_heure).getTime() - new Date(b.date_heure).getTime())
+  .slice(0, 3); 
+
+  console.log(rdvAVenir);
 
   // Helper pour formatage date/heure
   const formatDate = (iso: string) => new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
@@ -131,6 +123,9 @@ export const Home = (): JSX.Element => {
                 <ChevronRightIcon className="w-6 h-6" />
               </button>
               <div className="flex flex-col gap-4 mt-2 overflow-y-auto max-h-[350px] pr-2">
+                {rdvAVenir.length === 0 && (
+                  <div className="text-[#75746f] text-center">Aucun rendez-vous à venir</div>
+                )}
                 {rdvAVenir.map((rdv, idx) => (
                   <div key={idx} className="flex flex-col gap-1 border-b last:border-b-0 pb-2 last:pb-0">
                     <div className="flex items-center gap-2">

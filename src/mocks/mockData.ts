@@ -97,6 +97,18 @@ export const mockModulePatient = [
 ];
 
 export const mockRendezVous = [
-  { id: 1, patient_id: 1, psychologue_id: 1, date_heure: '2024-03-10T10:00:00Z', duree: 60, type: 'présentiel', notes: 'Premier rendez-vous pour faire le point sur ses progrès', statut: 'confirmé', date_creation: '2024-03-01T09:00:00Z' },
+    {
+        id: 2,
+        patient_id: 1,
+        psychologue_id: 1,
+        date_heure: '2025-06-10T14:00:00Z', // Futur
+        duree: 60,
+        type: 'visio',
+        notes: 'Suivi régulier',
+        statut: 'confirmé',
+        date_creation: '2025-05-11T09:00:00Z'
+      }
+,      
   { id: 2, patient_id: 2, psychologue_id: 1, date_heure: '2024-03-13T14:00:00Z', duree: 60, type: 'visio', notes: 'Bilan de mi-parcours', statut: 'planifié', date_creation: '2024-03-02T09:00:00Z' },
 ]; 
+
