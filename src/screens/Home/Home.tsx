@@ -6,6 +6,8 @@ import {
   UserIcon,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { dataService } from "../../services/dataService";
 
 // Data for upcoming appointments
 const upcomingAppointments = [
@@ -55,12 +57,58 @@ const modules = [
 
 export const Home = (): JSX.Element => {
   const navigate = useNavigate();
+  const [user, setUser] = useState<any>(null);
+  const [modules, setModules] = useState<any[]>([]);
+  const [modulePatient, setModulePatient] = useState<any[]>([]);
+  const [rendezVous, setRendezVous] = useState<any[]>([]);
+
+  useEffect(() => {
+    dataService.getCurrentUser().then(setUser);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      dataService.getModulePatient(user.id).then(setModulePatient);
+      dataService.getRendezVous(user.id).then(setRendezVous);
+      dataService.getModules().then(setModules);
+    }
+  }, [user]);
+
+  // Progression
+  const modulesTermines = modulePatient.filter(mp => mp.progression >= 100).length;
+  const totalModules = modulePatient.length;
+  const moduleEnCours = modulePatient
+    .filter(mp => mp.progression < 100)
+    .sort((a, b) => a.progression - b.progression)[0];
+
+  // Modules récents
+  const modulesRecents = [...modulePatient]
+    .sort((a, b) => new Date(b.derniere_activite).getTime() - new Date(a.derniere_activite).getTime())
+    .slice(0, 5)
+    .map(mp => modules.find(m => m.id === mp.module_id))
+    .filter(Boolean);
+
+  // Rendez-vous à venir
+  const rdvAVenir = [...rendezVous]
+    .filter(rdv => new Date(rdv.date_heure) > new Date())
+    .sort((a, b) => new Date(a.date_heure).getTime() - new Date(b.date_heure).getTime())
+    .slice(0, 3);
+
+  // Helper pour formatage date/heure
+  const formatDate = (iso: string) => new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
+  const formatTime = (iso: string, duree: number) => {
+    const start = new Date(iso);
+    const end = new Date(start.getTime() + duree * 60000);
+    return `${start.getHours().toString().padStart(2, "0")}:${start.getMinutes().toString().padStart(2, "0")} - ${end.getHours().toString().padStart(2, "0")}:${end.getMinutes().toString().padStart(2, "0")}`;
+  };
 
   return (
     <div className="min-h-screen min-w-full bg-[#fffbf1] flex flex-col">
       {/* HEADER */}
       <header className="flex items-center justify-between w-full px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md">
-        <div className="font-bold text-lg text-black font-[Quicksand]">BONJOUR PAULINE</div>
+        <div className="font-bold text-lg text-black font-[Quicksand]">
+          {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"}
+        </div>
         <div className="flex flex-col items-center">
           <div className="text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
           <img src="/home_imgs/logo-arc.svg" alt="Logo arc" className="h-12 mt-2" />
@@ -83,15 +131,15 @@ export const Home = (): JSX.Element => {
                 <ChevronRightIcon className="w-6 h-6" />
               </button>
               <div className="flex flex-col gap-4 mt-2 overflow-y-auto max-h-[350px] pr-2">
-                {upcomingAppointments.map((appointment, idx) => (
+                {rdvAVenir.map((rdv, idx) => (
                   <div key={idx} className="flex flex-col gap-1 border-b last:border-b-0 pb-2 last:pb-0">
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full" style={{background: appointment.color}}></span>
-                      <span className="font-semibold text-[15px]" style={{color: appointment.color}}>{appointment.date}</span>
-                      <span className="font-semibold text-[15px]" style={{color: appointment.color}}>{appointment.time}</span>
+                      <span className="w-2 h-2 rounded-full" style={{background: "#ef7d4f"}}></span>
+                      <span className="font-semibold text-[15px]" style={{color: "#ef7d4f"}}>{formatDate(rdv.date_heure)}</span>
+                      <span className="font-semibold text-[15px]" style={{color: "#ef7d4f"}}>{formatTime(rdv.date_heure, rdv.duree)}</span>
                     </div>
-                    <div className="font-medium text-black text-[15px]">{appointment.title}</div>
-                    <div className="text-xs text-[#75746f] truncate max-w-[90%]">{appointment.description}</div>
+                    <div className="font-medium text-black text-[15px]">{rdv.notes || "Rendez-vous"}</div>
+                    <div className="text-xs text-[#75746f] truncate max-w-[90%]">{rdv.statut}</div>
                   </div>
                 ))}
               </div>
@@ -106,9 +154,13 @@ export const Home = (): JSX.Element => {
                 <div className="relative flex items-center justify-center mb-2">
                   <svg width="120" height="120" viewBox="0 0 120 120">
                     <circle cx="60" cy="60" r="54" stroke="#eee" strokeWidth="12" fill="none" />
-                    <circle cx="60" cy="60" r="54" stroke="#ef7d4f" strokeWidth="12" fill="none" strokeDasharray="339.292" strokeDashoffset="226.195" strokeLinecap="round" />
+                    <circle cx="60" cy="60" r="54" stroke="#ef7d4f" strokeWidth="12" fill="none"
+                      strokeDasharray="339.292"
+                      strokeDashoffset={totalModules ? 339.292 - (modulesTermines / totalModules) * 339.292 : 339.292}
+                      strokeLinecap="round"
+                    />
                   </svg>
-                  <span className="absolute text-3xl font-bold text-[#ef7d4f]">2/6</span>
+                  <span className="absolute text-3xl font-bold text-[#ef7d4f]">{modulesTermines}/{totalModules}</span>
                 </div>
                 <div className="text-[#ef7d4f] text-2xl font-semibold font-[Quicksand]">Modules terminés</div>
               </div>
@@ -119,12 +171,22 @@ export const Home = (): JSX.Element => {
                 <div className="bg-[#ef7d4f] rounded-br-2xl rounded-tl-2xl px-6 py-2 text-white font-bold text-xl font-[Reef-Bold] shadow-md">Module en cours</div>
               </div>
               <div className="bg-[#fffbf1] rounded-2xl shadow-md flex flex-col items-center p-4 w-full">
-                <img src="/home_imgs/vector-7-1.png" alt="Arbre de vie" className="rounded-t-2xl w-full h-40 object-cover mb-2" />
-                <div className="text-[#ef7d4f] text-2xl font-semibold font-[Quicksand] mb-1">Arbre de vie</div>
-                <div className="flex items-center gap-2 text-black text-lg">
-                  <TimerIcon className="w-6 h-6" />
-                  1h
-                </div>
+                {moduleEnCours ? (
+                  <>
+                    <img src={modules.find(m => m.id === moduleEnCours.module_id)?.miniature || "/images/default-module.png"} alt={modules.find(m => m.id === moduleEnCours.module_id)?.titre} className="rounded-t-2xl w-full h-40 object-cover mb-2" />
+                    <div className="text-[#ef7d4f] text-2xl font-semibold font-[Quicksand] mb-1">
+                      {modules.find(m => m.id === moduleEnCours.module_id)?.titre}
+                    </div>
+                    <div className="flex items-center gap-2 text-black text-lg">
+                      <TimerIcon className="w-6 h-6" />
+                      {modules.find(m => m.id === moduleEnCours.module_id)?.duree_estimee
+                        ? `${modules.find(m => m.id === moduleEnCours.module_id)?.duree_estimee} min`
+                        : ""}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-[#75746f]">Aucun module en cours</div>
+                )}
               </div>
             </div>
           </div>
@@ -135,21 +197,21 @@ export const Home = (): JSX.Element => {
           <div className="bg-[#ef7d4f] rounded-br-2xl rounded-tl-2xl px-6 py-2 text-white font-bold text-xl font-[Reef-Bold] shadow-md inline-block mb-2">DERNIERS MODULES CONSULTÉS</div>
           <div className="bg-[#fffbf1] rounded-2xl shadow-md p-4">
             <div className="flex items-center justify-end gap-2 mb-2">
-              <span className="text-[#4b4a47] text-base">Voir tout les modules</span>
+              <span className="text-[#4b4a47] text-base cursor-pointer" onClick={() => navigate('/modules')}>Voir tout les modules</span>
               <ChevronRightIcon className="w-6 h-6 text-[#ef7d4f]" />
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2">
-              {modules.map((module, idx) => (
+              {modulesRecents.map((module, idx) => (
                 <div
                   key={idx}
                   className="min-w-[220px] max-w-[240px] bg-[#fffbf1] rounded-2xl shadow-md flex flex-col items-center cursor-pointer"
                   onClick={() => navigate(`/module/${module.id}`)}
                 >
-                  <img src="/home_imgs/vector-7-2.png" alt={module.title} className="rounded-t-2xl w-full h-28 object-cover" />
-                  <div className="text-[#ef7d4f] text-xl font-semibold font-[Quicksand] mt-2 mb-1 text-center px-2">{module.title}</div>
+                  <img src={module.miniature || "/images/default-module.png"} alt={module.titre} className="rounded-t-2xl w-full h-28 object-cover" />
+                  <div className="text-[#ef7d4f] text-xl font-semibold font-[Quicksand] mt-2 mb-1 text-center px-2">{module.titre}</div>
                   <div className="flex items-center gap-2 text-black text-base mb-2">
                     <TimerIcon className="w-5 h-5" />
-                    {module.duration}
+                    {module.duree_estimee ? `${module.duree_estimee} min` : ""}
                   </div>
                 </div>
               ))}

@@ -1,20 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CalendarIcon, BookIcon, UserIcon, TimerIcon, Search } from "lucide-react";
-
-const modules = [
-  { id: 1, title: "Engagement 1", duration: "1h35", img: "/img/module1.jpg" },
-  { id: 2, title: "Engagement 1", duration: "1h35", img: "/img/module2.jpg" },
-  { id: 3, title: "Les travaux à trier", duration: "1h", img: "/img/module3.jpg" },
-  { id: 4, title: "En avant ça grimpe", duration: "35min", img: "/img/module4.jpg" },
-  { id: 5, title: "En avant ça grimpe", duration: "35min", img: "/img/module4.jpg" },
-  { id: 6, title: "En avant ça grimpe", duration: "35min", img: "/img/module4.jpg" },
-];
+import { dataService } from "../services/dataService";
 
 export const ModulesList = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState<any>(null);
+  const [modules, setModules] = useState<any[]>([]);
+  const [modulePatient, setModulePatient] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [showCompleted, setShowCompleted] = useState(false);
+
+  useEffect(() => {
+    dataService.getCurrentUser().then(setUser);
+    dataService.getModules().then(setModules);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      dataService.getModulePatient(user.id).then(setModulePatient);
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fffbf1]">

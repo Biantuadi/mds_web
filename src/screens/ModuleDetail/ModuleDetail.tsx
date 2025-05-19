@@ -1,8 +1,20 @@
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { CalendarIcon, BookIcon, UserIcon } from "lucide-react";
+import { dataService } from "../../services/dataService";
 
 export const ModuleDetail = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [module, setModule] = useState<any>(null);
+  const [contenuBlocs, setContenuBlocs] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (id) {
+      dataService.getModuleById(Number(id)).then(setModule);
+      dataService.getContenuBlocs(Number(id)).then(setContenuBlocs);
+    }
+  }, [id]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fffbf1]">
@@ -39,28 +51,39 @@ export const ModuleDetail = () => {
 
       {/* Contenu */}
       <div className="max-w-4xl mx-auto mt-6 px-4">
-        <p className="mb-4 text-justify">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. <span className="text-[#ef7d4f] font-semibold">Pellentesque sit amet</span> sapien fringilla, mattis ligula consectetur, ultrices mauris.
-        </p>
-        <p className="mb-4 text-justify">
-          Nullam et interdum justo. Proin eleifend metus ac lacus sodales, vel egestas metus auctor. Praesent turpis purus, venenatis id maximus nec, cursus nec eros. Nullam dapibus euismod porttitor. Mauris varius ipsum ut placerat blandit. Sed venenatis orci pretium magna interdum, in feugiat ipsum interdum. Nulla imperdiet ultricies tortor. Vestibulum semper ex orci, in viverra lacus iaculis et. Aenean a rhoncus leo, vitae hendrerit dolor. Morbi non scelerisque dolor, sed scelerisque nulla. Aenean mollis viverra arcu, in maximus leo lacinia in. Proin malesuada at dui vel lobortis. Donec non nunc velit. In ac tempus ipsum, vel ullamcorper est. Vestibulum gravida elementum velit, ac pretium justo viverra at. Sed purus enim, imperdiet nec justo vitae, accumsan congue mauris.
-        </p>
-        <p className="mb-4 text-justify">
-          Maecenas vitae mattis tellus. Nullam <span className="font-bold">quis imperdiet augue</span>. Vestibulum auctor ornare leo, non suscipit magna interdum eu.
-        </p>
-        <ul className="mb-4 list-none">
-          <li className="flex items-center gap-2"><span className="text-[#75746f]">&#9632;</span> Sapien fringilla</li>
-          <li className="flex items-center gap-2"><span className="text-[#75746f]">&#9632;</span> Pellentesque sit amet sapien</li>
-          <li className="flex items-center gap-2"><span className="text-[#75746f]">&#9632;</span> Aliquam</li>
-          <li className="flex items-center gap-2"><span className="text-[#75746f]">&#9632;</span> Non suscipit magna interdum eu</li>
-          <li className="flex items-center gap-2"><span className="text-[#75746f]">&#9632;</span> Maximus ante fermentum</li>
-        </ul>
-        <ul className="mb-4 list-disc pl-6 text-[#75746f]">
-          <li>Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales.</li>
-        </ul>
-        <div className="bg-[#eaeaea] rounded-xl px-4 py-2 text-[#75746f] mb-4">
-          Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu.
-        </div>
+        {contenuBlocs
+          .sort((a, b) => a.ordre - b.ordre)
+          .map((bloc, idx) => {
+            if (bloc.bloc_id === 1) { // titre
+              return (
+                <h2 key={idx} className="text-2xl font-bold text-[#ef7d4f] mb-4">{bloc.contenu}</h2>
+              );
+            }
+            if (bloc.bloc_id === 2) { // texte
+              return (
+                <p key={idx} className="mb-4 text-justify">{bloc.contenu}</p>
+              );
+            }
+            if (bloc.bloc_id === 4) { // liste
+              // On suppose que chaque élément est séparé par un retour à la ligne
+              return (
+                <ul key={idx} className="mb-4 list-disc pl-6 text-[#75746f]">
+                  {bloc.contenu.split('\n').map((item: string, i: number) =>
+                    <li key={i}>{item.replace(/^- /, "")}</li>
+                  )}
+                </ul>
+              );
+            }
+            if (bloc.bloc_id === 5) { // citation
+              return (
+                <div key={idx} className="bg-[#eaeaea] rounded-xl px-4 py-2 text-[#75746f] mb-4 italic">
+                  {bloc.contenu}
+                </div>
+              );
+            }
+            // Ajoute d'autres types si besoin (image, etc.)
+            return null;
+          })}
       </div>
 
       {/* Bouton */}

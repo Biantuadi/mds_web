@@ -1,10 +1,24 @@
+import React, { useEffect, useState } from "react";
 import { CalendarIcon, ChevronLeftIcon } from "lucide-react";
 import { Card, CardContent } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
 import { ScrollArea } from "../../components/ui/scroll-area";
-import { mockNextSessions } from "../../data/mockData";
+import { dataService } from "../../services/dataService";
 
 export const Appointments = (): JSX.Element => {
+  const [user, setUser] = useState<any>(null);
+  const [rendezVous, setRendezVous] = useState<any[]>([]);
+
+  useEffect(() => {
+    dataService.getCurrentUser().then(setUser);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      dataService.getRendezVous(user.id).then(setRendezVous);
+    }
+  }, [user]);
+
   return (
     <div className="bg-transparent flex flex-row justify-center ">
       <div className="bg-[url(/backgrounds-a.svg)] bg-[100%_100%] w-[100vw] min-h-screen bg-cover bg-center bg-no-repeat">
@@ -59,7 +73,7 @@ export const Appointments = (): JSX.Element => {
               <CardContent className="p-6">
                 <ScrollArea className="h-[calc(100vh-300px)]">
                   <div className="flex flex-col gap-6">
-                    {mockNextSessions.map((session, index) => (
+                    {rendezVous.map((session, index) => (
                       <div key={index} className="flex flex-col gap-2 pb-6 border-b border-gray-200 last:border-0">
                         <div className="flex items-center gap-2">
                           <Badge
