@@ -196,20 +196,31 @@ export const Home = (): JSX.Element => {
               <ChevronRightIcon className="w-6 h-6 text-[#ef7d4f]" />
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2">
-              {modulesRecents.map((module, idx) => (
-                <div
-                  key={idx}
-                  className="min-w-[220px] max-w-[240px] bg-[#fffbf1] rounded-2xl shadow-md flex flex-col items-center cursor-pointer"
-                  onClick={() => navigate(`/module/${module.id}`)}
-                >
-                  <img src={module.miniature || "/images/default-module.png"} alt={module.titre} className="rounded-t-2xl w-full h-28 object-cover" />
-                  <div className="text-[#ef7d4f] text-xl font-semibold font-[Quicksand] mt-2 mb-1 text-center px-2">{module.titre}</div>
-                  <div className="flex items-center gap-2 text-black text-base mb-2">
-                    <TimerIcon className="w-5 h-5" />
-                    {module.duree_estimee ? `${module.duree_estimee} min` : ""}
+              {modulesRecents.map((module, idx) => {
+                // Trouve la progression pour ce module
+                const mp = modulePatient.find(mp => mp.module_id === module.id);
+                const isTermine = mp && mp.progression >= 100;
+                return (
+                  <div
+                    key={idx}
+                    className="relative min-w-[220px] max-w-[240px] bg-[#fffbf1] rounded-2xl shadow-md flex flex-col items-center cursor-pointer"
+                    onClick={() => navigate(`/module/${module.id}`)}
+                  >
+                    {/* Badge terminé */}
+                    {isTermine && (
+                      <span className="absolute top-2 right-2 bg-[#4A5D4A] text-white text-xs font-bold px-3 py-1 rounded-full z-10">
+                        Terminé
+                      </span>
+                    )}
+                    <img src={module.miniature || "/images/default-module.png"} alt={module.titre} className="rounded-t-2xl w-full h-28 object-cover" />
+                    <div className="text-[#ef7d4f] text-xl font-semibold font-[Quicksand] mt-2 mb-1 text-center px-2">{module.titre}</div>
+                    <div className="flex items-center gap-2 text-black text-base mb-2">
+                      <TimerIcon className="w-5 h-5" />
+                      {module.duree_estimee ? `${module.duree_estimee} min` : ""}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

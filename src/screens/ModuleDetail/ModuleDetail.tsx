@@ -8,6 +8,12 @@ export const ModuleDetail = () => {
   const navigate = useNavigate();
   const [module, setModule] = useState<any>(null);
   const [contenuBlocs, setContenuBlocs] = useState<any[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [isValidated, setIsValidated] = useState(false);
+
+  useEffect(() => {
+    dataService.getCurrentUser().then(setUser);
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -15,6 +21,23 @@ export const ModuleDetail = () => {
       dataService.getContenuBlocs(Number(id)).then(setContenuBlocs);
     }
   }, [id]);
+
+  // Vérifie si le module est déjà validé
+  useEffect(() => {
+    if (user && id) {
+      dataService.getModulePatient(user.id).then((list) => {
+        const mp:any = list.find((mp: any) => mp.module_id === Number(id));
+        setIsValidated(mp?.progression >= 100);
+      });
+    }
+  }, [user, id]);
+
+  const handleValidate = async () => {
+    if (user && module) {
+      await dataService.validateModule(module.id, user.id);
+      setIsValidated(true);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fffbf1]">
@@ -93,8 +116,14 @@ export const ModuleDetail = () => {
 
       {/* Bouton */}
       <div className="flex justify-end max-w-4xl mx-auto mt-8 px-4">
-        <button className="bg-[#ef7d4f] text-white rounded-xl px-8 py-3 font-semibold shadow-md hover:bg-[#d96a3b] transition">
-          Valider le module
+        <button
+          className={`bg-[#ef7d4f] text-white rounded-xl px-8 py-3 font-semibold shadow-md transition ${
+            isValidated ? "opacity-60 cursor-not-allowed" : "hover:bg-[#d96a3b]"
+          }`}
+          onClick={handleValidate}
+          disabled={isValidated}
+        >
+          {isValidated ? "Module validé !" : "Valider le module"}
         </button>
       </div>
 

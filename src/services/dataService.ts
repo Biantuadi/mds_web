@@ -5,6 +5,7 @@ import {
   mockContenuBlocs,
   mockModulePatient,
   mockRendezVous,
+  validateModuleMock,
 } from '../mocks/mockData';
 
 export const dataService = {
@@ -30,4 +31,9 @@ export const dataService = {
   async getContenuBlocs(moduleId: number) {
     return Promise.resolve(mockContenuBlocs.filter(cb => cb.module_id === moduleId));
   },
-}; 
+  async validateModule(moduleId: number, patientId: number) {
+    validateModuleMock(moduleId, patientId);
+    return Promise.resolve(true);
+  },
+};
+

@@ -98,9 +98,15 @@ export const ModulesList = () => {
           {filteredModules.map(module => (
             <div
               key={module.id}
-              className="flex items-center py-6 cursor-pointer hover:bg-[#f9f6f2] transition group"
+              className="relative flex items-center py-6 cursor-pointer hover:bg-[#f9f6f2] transition group"
               onClick={() => navigate(`/module/${module.id}`)}
             >
+              {/* Badge terminé */}
+              {module.progression >= 100 && (
+                <span className="absolute top-2 right-4 bg-[#4A5D4A] text-white text-xs font-bold px-3 py-1 rounded-full z-10">
+                  Terminé
+                </span>
+              )}
               <img src={module.miniature || "/images/default-module.png"} alt={module.titre} className="w-16 h-16 rounded-xl object-cover mr-6 border border-[#ececec]" />
               <div className="flex-1 text-center">
                 <div className="text-lg font-[Quicksand] font-semibold group-hover:text-[#ef7d4f]">{module.titre}</div>
