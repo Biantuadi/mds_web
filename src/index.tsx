@@ -5,6 +5,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Login } from "./screens/Login";
 import { Home } from "./screens/Home/Home";
+import { Appointments } from "./screens/Appointments/Appointments";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { store, persistor } from "./store";
 
@@ -20,6 +21,14 @@ createRoot(document.getElementById("app") as HTMLElement).render(
               element={
                 <ProtectedRoute>
                   <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/appointments"
+              element={
+                <ProtectedRoute>
+                  <Appointments />
                 </ProtectedRoute>
               }
             />
