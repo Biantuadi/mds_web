@@ -8,46 +8,7 @@ import {
   // validateModuleMock,
 } from '../mocks/mockData';
 import { api } from './auth';
-import axios, { AxiosError } from 'axios';
-
-interface Module {
-  id: number;
-  module_id: number;
-  patient_id: number;
-  date_assignation: string;
-  progression: number;
-  derniere_activite: string | null;
-  titre: string;
-  description: string;
-  miniature: string;
-  est_publie: number;
-  est_gratuit: number;
-  duree_estimee: number;
-}
-
-interface ModuleDetail {
-  id: number;
-  titre: string;
-  description: string;
-  miniature: string;
-  est_publie: number;
-  est_gratuit: number;
-  duree_estimee: number;
-  createur: {
-    prenom: string;
-    nom: string;
-  };
-  contenu: Array<{
-    id: number;
-    module_id: number;
-    bloc_id: number;
-    contenu: string;
-    url_ressource: string | null;
-    ordre: number;
-    metadata: any | null;
-    type: 'titre' | 'texte' | 'liste' | 'image' | 'citation';
-  }>;
-}
+import axios from 'axios';
 
 export const dataService = {
   async getCurrentUser() {
