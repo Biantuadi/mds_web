@@ -9,55 +9,90 @@ export default function Header({ user }: any) {
   const isActive = (path: string) => location.pathname.startsWith(path);
 
   return (
-    <header className="flex flex-col md:flex-row items-center justify-between w-full px-4 md:px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md gap-2 md:gap-0  h-[100px] z-30">
-      <div className="font-bold text-base md:text-lg text-black font-[Quicksand]">
-        {user
-          ? `BONJOUR ${user.prenom.toUpperCase()} ${user.nom.toUpperCase()}`
-          : "BONJOUR"}
-      </div>
-      <div className="flex flex-col w-[318px] h-[154px] items-center justify-center gap-3.5 absolute top-[13px] left-[561px]">
-        <div className="self-stretch h-[13px] [font-family:'Reef-Bold',Helvetica] font-bold text-2xl tracking-[2.40px] whitespace-nowrap relative text-black text-center leading-[normal] mb-3">
-          LES AUDACIEUSES ACADEMIE
+    <header className="w-full bg-[#fffbf1] rounded-b-2xl shadow-md z-30 relative">
+      <div className="flex flex-col lg:flex-row items-center justify-between w-full px-4 md:px-8 py-4 gap-4 lg:gap-0 min-h-[100px]">
+        
+        {/* Section gauche - Salutation */}
+        <div className="font-bold text-base md:text-lg text-black font-[Quicksand] order-1 lg:order-1">
+          {user
+            ? `BONJOUR ${user.prenom.toUpperCase()} ${user.nom.toUpperCase()}`
+            : "BONJOUR"}
         </div>
-        <div className="flex flex-col w-[102px] h-24 items-center gap-3.5 relative rounded-[50px] overflow-hidden">
-          <img
-            className="absolute w-[102px] h-[63px] top-0 left-0"
-            alt="Ellipse"
-            src="/home_imgs/ellipse-8.svg"
-          />
-          <img
-            className="relative w-24 h-[60px]"
-            alt="Logo arc"
-            src="/home_imgs/logo-arc.svg"
-          />
-        </div>
-      </div>
-      <div className="flex items-center gap-4 md:gap-6">
-        <HomeIcon
-          className={`w-6 h-6 cursor-pointer ${
-            isActive("/home") ? "text-[#ef7d4f]" : "text-gray-500"
-          }`}
-          onClick={() => navigate("/home")}
-        />
 
-        <CalendarIcon
-          className={`w-6 h-6 cursor-pointer ${
-            isActive("/appointments") ? "text-[#ef7d4f]" : "text-gray-500"
-          }`}
-          onClick={() => navigate("/appointments")}
-        />
-        <BookIcon
-          className={`w-6 h-6 cursor-pointer ${
-            isActive("/modules") ? "text-[#ef7d4f]" : "text-gray-500"
-          }`}
-          onClick={() => navigate("/modules")}
-        />
-        <UserIcon
-          className={`w-6 h-6 cursor-pointer ${
-            isActive("/profile") ? "text-[#ef7d4f]" : "text-gray-500"
-          }`}
-          onClick={() => navigate("/profile")}
-        />
+        {/* Section centrale - Logo et titre */}
+        <div className="hidden lg:block absolute left-1/2 transform -translate-x-1/2 top-6">
+          <div className="flex flex-col items-center justify-center gap-1">
+            <div className="text-black text-center font-bold text-2xl tracking-[2.40px] font-['Reef-Bold',Helvetica] whitespace-nowrap">
+              LES AUDACIEUSES ACADEMIE
+            </div>
+            <div className="flex items-center justify-center relative">
+              <div className="relative w-[102px] h-24">
+                <img
+                  className="absolute inset-0 w-full h-auto"
+                  alt="Ellipse"
+                  src="/home_imgs/ellipse-8.svg"
+                />
+                <img
+                  className="relative w-full h-auto z-10"
+                  alt="Logo arc"
+                  src="/home_imgs/logo-arc.svg"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Section centrale mobile - Logo et titre */}
+        <div className="flex lg:hidden flex-col items-center justify-center gap-1 order-3 w-full">
+          <div className="text-black text-center font-bold text-lg md:text-xl tracking-[1.5px] font-['Reef-Bold',Helvetica] whitespace-nowrap">
+            LES AUDACIEUSES ACADEMIE
+          </div>
+          <div className="flex items-center justify-center relative">
+            <div className="relative w-20 h-16 md:w-24 md:h-20">
+              <img
+                className="absolute inset-0 w-full h-auto"
+                alt="Ellipse"
+                src="/home_imgs/ellipse-8.svg"
+              />
+              <img
+                className="relative w-full h-auto z-10"
+                alt="Logo arc"
+                src="/home_imgs/logo-arc.svg"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Section droite - Navigation */}
+        <div className="flex items-center gap-4 md:gap-6 order-2 lg:order-3">
+          <HomeIcon
+            className={`w-5 h-5 md:w-6 md:h-6 cursor-pointer transition-colors duration-200 hover:scale-110 ${
+              isActive("/home") ? "text-[#ef7d4f]" : "text-gray-500 hover:text-[#ef7d4f]"
+            }`}
+            onClick={() => navigate("/home")}
+          />
+
+          <CalendarIcon
+            className={`w-5 h-5 md:w-6 md:h-6 cursor-pointer transition-colors duration-200 hover:scale-110 ${
+              isActive("/appointments") ? "text-[#ef7d4f]" : "text-gray-500 hover:text-[#ef7d4f]"
+            }`}
+            onClick={() => navigate("/appointments")}
+          />
+          
+          <BookIcon
+            className={`w-5 h-5 md:w-6 md:h-6 cursor-pointer transition-colors duration-200 hover:scale-110 ${
+              isActive("/modules") ? "text-[#ef7d4f]" : "text-gray-500 hover:text-[#ef7d4f]"
+            }`}
+            onClick={() => navigate("/modules")}
+          />
+          
+          <UserIcon
+            className={`w-5 h-5 md:w-6 md:h-6 cursor-pointer transition-colors duration-200 hover:scale-110 ${
+              isActive("/profile") ? "text-[#ef7d4f]" : "text-gray-500 hover:text-[#ef7d4f]"
+            }`}
+            onClick={() => navigate("/profile")}
+          />
+        </div>
       </div>
     </header>
   );
