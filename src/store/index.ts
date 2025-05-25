@@ -6,7 +6,22 @@ import authReducer from './slices/authSlice';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth']
+  whitelist: ['auth'],
+  blacklist: ['error', 'isLoading'],
+  transforms: [
+    {
+      in: (state: any) => {
+        // Vérifier si le token existe dans localStorage
+        const token = localStorage.getItem('token');
+        if (!token) return state;
+        return {
+          ...state,
+          token
+        };
+      },
+      out: (state: any) => state
+    }
+  ]
 };
 
 const persistedReducer = persistReducer(persistConfig, authReducer);
@@ -17,7 +32,10 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false
+      serializableCheck: {
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        ignoredPaths: ['auth.token', 'auth.user']
+      }
     })
 });
 

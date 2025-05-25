@@ -16,7 +16,7 @@ const api = axios.create({
 
 // Intercepteur pour ajouter le token aux requêtes
 api.interceptors.request.use((config) => {
-  const token = Cookies.get(TOKEN_COOKIE);
+  const token = localStorage.getItem('token') || Cookies.get(TOKEN_COOKIE);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -74,20 +74,18 @@ export const loginUser = async (email: string, password: string): Promise<{ toke
       throw new Error(data.message || 'Erreur de connexion');
     }
 
-    // Stocker le token et les informations utilisateur dans les cookies
+    // Stocker le token et les informations utilisateur
     const token = btoa(JSON.stringify({ 
       userId: data.data.id, 
       email: data.data.email,
       timestamp: Date.now()
     }));
 
-    // Stocker dans les cookies avec une durée de 7 jours
-    Cookies.set(TOKEN_COOKIE, token, { expires: TOKEN_EXPIRY });
-    Cookies.set(USER_COOKIE, JSON.stringify(data.data), { expires: TOKEN_EXPIRY });
-
-    // Stocker aussi dans localStorage pour la compatibilité
+    // Stocker dans les cookies et localStorage
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(data.data));
+    Cookies.set(TOKEN_COOKIE, token, { expires: TOKEN_EXPIRY });
+    Cookies.set(USER_COOKIE, JSON.stringify(data.data), { expires: TOKEN_EXPIRY });
 
     console.log('✅ Connexion réussie pour:', data.data.email);
 
@@ -117,20 +115,20 @@ export const loginUser = async (email: string, password: string): Promise<{ toke
 };
 
 export const getCurrentUser = async (): Promise<any> => {
-  // Essayer d'abord de récupérer depuis les cookies
-  const token = Cookies.get(TOKEN_COOKIE);
-  const user = Cookies.get(USER_COOKIE);
+  // Essayer d'abord de récupérer depuis localStorage
+  const token = localStorage.getItem('token');
+  const user = localStorage.getItem('user');
   
-  // Si pas dans les cookies, essayer localStorage
+  // Si pas dans localStorage, essayer les cookies
   if (!token || !user) {
-    const localToken = localStorage.getItem('token');
-    const localUser = localStorage.getItem('user');
+    const cookieToken = Cookies.get(TOKEN_COOKIE);
+    const cookieUser = Cookies.get(USER_COOKIE);
     
-    if (localToken && localUser) {
-      // Migrer vers les cookies
-      Cookies.set(TOKEN_COOKIE, localToken, { expires: TOKEN_EXPIRY });
-      Cookies.set(USER_COOKIE, localUser, { expires: TOKEN_EXPIRY });
-      return JSON.parse(localUser);
+    if (cookieToken && cookieUser) {
+      // Migrer vers localStorage
+      localStorage.setItem('token', cookieToken);
+      localStorage.setItem('user', cookieUser);
+      return JSON.parse(cookieUser);
     }
     
     console.log('❌ Pas de token ou d\'utilisateur trouvé');

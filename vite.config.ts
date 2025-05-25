@@ -11,4 +11,9 @@ export default defineConfig({
       plugins: [tailwind()],
     },
   },
+  server: {
+    historyApiFallback: true,
+    strictPort: true,
+    port: 5173,
+  },
 });
