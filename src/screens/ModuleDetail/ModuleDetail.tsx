@@ -3,46 +3,113 @@ import { useParams, useNavigate } from "react-router-dom";
 import { CalendarIcon, BookIcon, UserIcon } from "lucide-react";
 import { dataService } from "../../services/dataService";
 
+interface ModuleDetail {
+  id: number;
+  titre: string;
+  description: string;
+  miniature: string;
+  est_publie: number;
+  est_gratuit: number;
+  duree_estimee: number;
+  createur: {
+    prenom: string;
+    nom: string;
+  };
+  contenu: Array<{
+    type: string;
+    content: string;
+    metadata?: {
+      caption?: string;
+    };
+  }>;
+}
+
 export const ModuleDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [module, setModule] = useState<any>(null);
+  const [module, setModule] = useState<ModuleDetail | null>(null);
   const [user, setUser] = useState<any>(null);
   const [isValidated, setIsValidated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     dataService.getCurrentUser().then(setUser);
   }, []);
 
   useEffect(() => {
-    if (id) {
-      dataService.getModuleById(Number(id)).then(setModule);
-    }
-  }, [id]);
-
-  // Vérifie si le module est déjà validé
-  useEffect(() => {
     if (user && id) {
-      dataService.getModulePatient(user.id).then((list) => {
-        const mp:any = list.find((mp: any) => mp.moduleId === Number(id));
-        setIsValidated(mp?.progress >= 100);
+      const moduleId = parseInt(id, 10);
+      
+      if (isNaN(moduleId)) {
+        setError("ID de module invalide");
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      
+      Promise.all([
+        dataService.getModuleDetail(moduleId),
+        dataService.getModulePatient(user.id)
+      ]).then(([moduleDetail, patientModules]) => {
+        console.log('Détails du module reçus:', moduleDetail);
+        console.log('Modules du patient reçus:', patientModules);
+        
+        setModule(moduleDetail);
+        const patientModule = patientModules.find((m: any) => m.module_id === moduleId);
+        setIsValidated(patientModule?.progression >= 100 || false);
+      }).catch(err => {
+        console.error('Erreur lors du chargement du module:', err);
+        setError(err.message);
+      }).finally(() => {
+        setLoading(false);
       });
     }
   }, [user, id]);
 
   const handleValidate = async () => {
     if (user && module) {
-      await dataService.validateModule(module.id, user.id);
-      setIsValidated(true);
+      try {
+        await dataService.validateModule(module.id, user.id);
+        setIsValidated(true);
+      } catch (err) {
+        console.error('Erreur lors de la validation du module:', err);
+      }
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#fffbf1]">
+        <div className="text-[#ef7d4f] text-xl">Chargement...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#fffbf1]">
+        <div className="text-red-500 text-xl">{error}</div>
+      </div>
+    );
+  }
+
+  if (!module) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#fffbf1]">
+        <div className="text-[#ef7d4f] text-xl">Module non trouvé</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#fffbf1]">
-       {/* HEADER */}
-       <header className="flex flex-col md:flex-row items-center justify-between w-full px-4 md:px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md gap-2 md:gap-0">
+      {/* HEADER */}
+      <header className="flex flex-col md:flex-row items-center justify-between w-full px-4 md:px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md gap-2 md:gap-0">
         <div className="font-bold text-base md:text-lg text-black font-[Quicksand]">
-          {user ? `BONJOUR ${user.firstname.toUpperCase()}` : "BONJOUR"}
+          {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"}
         </div>
         <div className="flex flex-col items-center">
           <div className="text-xl md:text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
@@ -59,28 +126,31 @@ export const ModuleDetail = () => {
       <div className="flex items-center gap-2 px-8 mt-4 text-sm text-[#75746f]">
         <button onClick={() => navigate(-1)} className="text-2xl text-[#ef7d4f] font-bold">&#60;</button>
         <span>
-          Accueil &gt; Modules &gt; {module ? module.title : ""}
+          Accueil &gt; Modules &gt; {module.titre}
         </span>
       </div>
 
       {/* Image du module */}
       <div className="w-full max-w-4xl mx-auto mt-4 rounded-t-3xl overflow-hidden shadow-md">
         <img
-          src={module?.thumbnail || "/images/default-module.png"}
-          alt={module?.title}
+          src={module.miniature || "/images/default-module.png"}
+          alt={module.titre}
           className="w-full h-64 object-cover"
         />
       </div>
 
       {/* Titre et sous-titre */}
       <div className="text-center mt-6">
-        <h1 className="text-3xl font-bold">{module?.title}</h1>
-        <p className="italic text-lg mt-2">{module?.description}</p>
+        <h1 className="text-3xl font-bold">{module.titre}</h1>
+        <p className="italic text-lg mt-2">{module.description}</p>
+        <p className="text-sm text-[#75746f] mt-2">
+          Créé par {module.createur.prenom} {module.createur.nom}
+        </p>
       </div>
 
       {/* Contenu dynamique */}
       <div className="max-w-4xl mx-auto mt-6 px-4">
-        {module?.content?.map((bloc: any, idx: number) => {
+        {module.contenu.map((bloc, idx) => {
           if (bloc.type === 'heading') {
             return (
               <h2 key={idx} className="text-2xl font-bold text-[#ef7d4f] mb-4">{bloc.content}</h2>

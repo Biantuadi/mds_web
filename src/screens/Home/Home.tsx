@@ -10,37 +10,117 @@ import  { useEffect, useState } from "react";
 import { dataService } from "../../services/dataService";
 import "./Home.scss";
 
+interface User {
+  id: number;
+  prenom: string;
+  nom: string;
+  email: string;
+  telephone: string;
+  competences: string;
+  emploi_actuel: string;
+  emploi_vise: string;
+  experience: string;
+  notes: string;
+  image_profil: string;
+  photo: string;
+  date_inscription: string;
+}
+
+interface Module {
+  id: number;
+  titre: string;
+  description: string;
+  miniature: string;
+  est_publie: boolean;
+  est_gratuit: boolean;
+  duree_estimee: number;
+}
+
+interface ModulePatient {
+  module_id: number;
+  progression: number;
+  date_assignation: string;
+  derniere_activite: string;
+}
+
 export const Home = (): JSX.Element => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<any>(null);
-  const [modules, setModules] = useState<any[]>([]);
-  const [modulePatient, setModulePatient] = useState<any[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [modules, setModules] = useState<Module[]>([]);
+  const [modulePatient, setModulePatient] = useState<ModulePatient[]>([]);
   const [rendezVous, setRendezVous] = useState<any[]>([]);
 
   useEffect(() => {
-    dataService.getCurrentUser().then(setUser);
-  }, []);
+    console.log('🔄 Chargement des données utilisateur...');
+    const loadUser = async () => {
+      try {
+        const userData = await dataService.getCurrentUser();
+        console.log('✅ Données utilisateur reçues:', userData);
+        if (userData) {
+          setUser(userData);
+        } else {
+          // Rediriger vers la page de login si pas d'utilisateur
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('❌ Erreur lors du chargement des données utilisateur:', error);
+        navigate('/login');
+      }
+    };
+    
+    loadUser();
+  }, [navigate]);
 
   useEffect(() => {
     if (user) {
-      dataService.getModulePatient(user.id).then(setModulePatient);
-      dataService.getRendezVous(user.id).then(setRendezVous);
-      dataService.getModules().then(setModules);
+      console.log('🔄 Chargement des données pour l\'utilisateur:', user.id);
+      
+      Promise.all([
+        dataService.getModulePatient(user.id),
+        dataService.getRendezVous(user.id),
+        dataService.getModules()
+      ]).then(([modulePatientData, rendezVousData, modulesData]) => {
+        console.log('✅ Modules du patient reçus (détaillé):', JSON.stringify(modulePatientData, null, 2));
+        console.log('✅ Rendez-vous reçus (détaillé):', JSON.stringify(rendezVousData, null, 2));
+        console.log('✅ Modules reçus (détaillé):', JSON.stringify(modulesData, null, 2));
+        
+        setModulePatient(modulePatientData);
+        setRendezVous(rendezVousData);
+        setModules(modulesData);
+
+        // Vérification des données après le setState
+        console.log('📊 État après mise à jour:', {
+          modulePatient: modulePatientData,
+          modules: modulesData,
+          modulesTermines: modulePatientData.filter((mp: any) => mp.progression >= 100).length,
+          totalModules: modulePatientData.length,
+          moduleEnCours: modulePatientData
+            .filter((mp: any) => mp.progression < 100)
+            .sort((a: any, b: any) => a.progression - b.progression)[0],
+          modulesRecents: [...modulePatientData]
+            .sort((a: any, b: any) => new Date(b.derniere_activite || 0).getTime() - new Date(a.derniere_activite || 0).getTime())
+            .slice(0, 5)
+            .map((mp: any) => modulesData.find((m: any) => m.id === mp.module_id))
+            .filter(Boolean)
+        });
+      }).catch(error => {
+        console.error('❌ Erreur lors du chargement des données:', error);
+      });
     }
   }, [user]);
 
   // Progression
-  const modulesTermines = modulePatient.filter(mp => mp.progress >= 100).length;
+  const modulesTermines = modulePatient.filter((mp: any) => mp.progression >= 100).length;
   const totalModules = modulePatient.length;
   const moduleEnCours = modulePatient
-    .filter(mp => mp.progress < 100)
-    .sort((a, b) => a.progress - b.progress)[0];
+    .filter((mp: any) => mp.progression < 100)
+    .sort((a: any, b: any) => a.progression - b.progression)[0];
 
   // Modules récents
   const modulesRecents = [...modulePatient]
-    .sort((a, b) => new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime())
+    .sort((a: any, b: any) => new Date(b.derniere_activite || 0).getTime() - new Date(a.derniere_activite || 0).getTime())
     .slice(0, 5)
-    .map(mp => modules.find(m => m.id === mp.moduleId))
+    .map((mp: any) => modules.find((m: any) => m.id === mp.module_id))
     .filter(Boolean);
 
   // Rendez-vous à venir
@@ -57,12 +137,21 @@ export const Home = (): JSX.Element => {
     return `${start.getHours().toString().padStart(2, "0")}:${start.getMinutes().toString().padStart(2, "0")} - ${end.getHours().toString().padStart(2, "0")}:${end.getMinutes().toString().padStart(2, "0")}`;
   };
 
+  console.log('📊 État actuel:', {
+    user,
+    modulesTermines,
+    totalModules,
+    moduleEnCours,
+    modulesRecents,
+    rdvAVenir
+  });
+
   return (
     <div className="min-h-screen min-w-full bg-[#fffbf1] flex flex-col">
       {/* HEADER */}
       <header className="flex flex-col md:flex-row items-center justify-between w-full px-4 md:px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md gap-2 md:gap-0">
         <div className="font-bold text-base md:text-lg text-black font-[Quicksand]">
-          {user ? `BONJOUR ${user.firstname.toUpperCase()}` : "BONJOUR"}
+          {user ? `BONJOUR ${user.prenom.toUpperCase()} ${user.nom.toUpperCase()}` : "BONJOUR"}
         </div>
         <div className="flex flex-col items-center">
           <div className="text-xl md:text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
@@ -131,14 +220,18 @@ export const Home = (): JSX.Element => {
               <div className="bg-[#fffbf1] rounded-2xl shadow-md flex flex-col items-center p-4 w-full">
                 {moduleEnCours ? (
                   <>
-                    <img src={modules.find(m => m.id === moduleEnCours.moduleId)?.thumbnail || "/images/default-module.png"} alt={modules.find(m => m.id === moduleEnCours.moduleId)?.title} className="rounded-t-2xl w-full h-40 object-cover mb-2" />
+                    <img 
+                      src={modules.find(m => m.id === moduleEnCours.module_id)?.miniature || "/images/default-module.png"} 
+                      alt={modules.find(m => m.id === moduleEnCours.module_id)?.titre} 
+                      className="rounded-t-2xl w-full h-40 object-cover mb-2" 
+                    />
                     <div className="text-[#ef7d4f] text-2xl font-semibold font-[Quicksand] mb-1">
-                      {modules.find(m => m.id === moduleEnCours.moduleId)?.title}
+                      {modules.find(m => m.id === moduleEnCours.module_id)?.titre}
                     </div>
                     <div className="flex items-center gap-2 text-black text-lg">
                       <TimerIcon className="w-6 h-6" />
-                      {modules.find(m => m.id === moduleEnCours.moduleId)?.estimatedDuration
-                        ? `${modules.find(m => m.id === moduleEnCours.moduleId)?.estimatedDuration} min`
+                      {modules.find(m => m.id === moduleEnCours.module_id)?.duree_estimee
+                        ? `${modules.find(m => m.id === moduleEnCours.module_id)?.duree_estimee} min`
                         : ""}
                     </div>
                   </>
@@ -160,26 +253,30 @@ export const Home = (): JSX.Element => {
             </div>
             <div className="flex gap-3 md:gap-4 overflow-x-auto pb-2">
               {modulesRecents.map((module, idx) => {
-                // Trouve la progression pour ce module
-                const mp = modulePatient.find(mp => mp.moduleId === module.id);
-                const isTermine = mp && mp.progress >= 100;
+                const mp = modulePatient.find(mp => mp.module_id === module?.id);
+                const isTermine = mp && mp.progression >= 100;
                 return (
                   <div
                     key={idx}
                     className="relative min-w-[220px] max-w-[240px] bg-[#fffbf1] rounded-2xl shadow-md flex flex-col items-center cursor-pointer"
-                    onClick={() => navigate(`/module/${module.id}`)}
+                    onClick={() => navigate(`/module/${module?.id}`)}
                   >
-                    {/* Badge terminé */}
                     {isTermine && (
                       <span className="absolute top-2 right-2 bg-[#4A5D4A] text-white text-xs font-bold px-3 py-1 rounded-full z-10">
                         Terminé
                       </span>
                     )}
-                    <img src={module.thumbnail || "/images/default-module.png"} alt={module.title} className="rounded-t-2xl w-full h-28 object-cover" />
-                    <div className="text-[#ef7d4f] text-xl font-semibold font-[Quicksand] mt-2 mb-1 text-center px-2">{module.title}</div>
+                    <img 
+                      src={module?.miniature || "/images/default-module.png"} 
+                      alt={module?.titre} 
+                      className="rounded-t-2xl w-full h-28 object-cover" 
+                    />
+                    <div className="text-[#ef7d4f] text-xl font-semibold font-[Quicksand] mt-2 mb-1 text-center px-2">
+                      {module?.titre}
+                    </div>
                     <div className="flex items-center gap-2 text-black text-base mb-2">
                       <TimerIcon className="w-5 h-5" />
-                      {module.estimatedDuration ? `${module.estimatedDuration} min` : ""}
+                      {module?.duree_estimee ? `${module.duree_estimee} min` : ""}
                     </div>
                   </div>
                 );

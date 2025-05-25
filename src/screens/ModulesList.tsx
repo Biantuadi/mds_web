@@ -3,39 +3,42 @@ import { useNavigate } from "react-router-dom";
 import { CalendarIcon, BookIcon, UserIcon, TimerIcon, Search } from "lucide-react";
 import { dataService } from "../services/dataService";
 
+interface Module {
+  id: number;
+  module_id: number;
+  patient_id: number;
+  date_assignation: string;
+  progression: number;
+  derniere_activite: string | null;
+  titre: string;
+  description: string;
+  miniature: string;
+  est_publie: number;
+  est_gratuit: number;
+  duree_estimee: number;
+}
+
 export const ModulesList = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
-  const [modules, setModules] = useState<any[]>([]);
-  const [modulePatient, setModulePatient] = useState<any[]>([]);
+  const [modules, setModules] = useState<Module[]>([]);
   const [search, setSearch] = useState("");
   const [showCompleted, setShowCompleted] = useState(false);
 
   useEffect(() => {
     dataService.getCurrentUser().then(setUser);
-    dataService.getModules().then(setModules);
   }, []);
 
   useEffect(() => {
     if (user) {
-      dataService.getModulePatient(user.id).then(setModulePatient);
+      dataService.getModulePatient(user.id).then(setModules);
     }
   }, [user]);
 
-  // Associer chaque module à sa progression (si assigné à la patiente)
-  const modulesWithProgress = modules.map((mod: any) => {
-    const mp = modulePatient.find((mp: any) => mp.moduleId === mod.id);
-    return {
-      ...mod,
-      progression: mp ? mp.progress : 0,
-      lastActivity: mp ? mp.lastActivity : null,
-    };
-  });
-
   // Filtrage recherche et modules terminés
-  const filteredModules = modulesWithProgress
+  const filteredModules = modules
     .filter(m =>
-      m.title.toLowerCase().includes(search.toLowerCase()) &&
+      m.titre.toLowerCase().includes(search.toLowerCase()) &&
       (showCompleted ? m.progression >= 100 : true)
     );
 
@@ -44,7 +47,7 @@ export const ModulesList = () => {
       {/* Header */}
       <header className="flex items-center justify-between w-full px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md">
         <div className="font-bold text-lg text-black font-[Quicksand]">
-          {user ? `BONJOUR ${user.firstname.toUpperCase()}` : "BONJOUR"}
+          {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"}
         </div>
         <div className="flex flex-col items-center">
           <div className="text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
@@ -108,12 +111,12 @@ export const ModulesList = () => {
                     Terminé
                   </span>
                 )}
-                <img src={module.thumbnail || "/images/default-module.png"} alt={module.title} className="w-16 h-16 rounded-xl object-cover mr-6 border border-[#ececec]" />
+                <img src={module.miniature || "/images/default-module.png"} alt={module.titre} className="w-16 h-16 rounded-xl object-cover mr-6 border border-[#ececec]" />
                 <div className="flex-1 text-center">
-                  <div className="text-lg font-[Quicksand] font-semibold group-hover:text-[#ef7d4f]">{module.title}</div>
+                  <div className="text-lg font-[Quicksand] font-semibold group-hover:text-[#ef7d4f]">{module.titre}</div>
                   <div className="flex items-center justify-center gap-2 text-[#75746f] mt-1">
                     <TimerIcon className="w-5 h-5" />
-                    <span>{module.estimatedDuration ? `${module.estimatedDuration} min` : ""}</span>
+                    <span>{module.duree_estimee ? `${module.duree_estimee} min` : ""}</span>
                     {module.progression > 0 && (
                       <span className="ml-4 text-xs text-[#ef7d4f]">{module.progression}% complété</span>
                     )}

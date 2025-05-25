@@ -4,19 +4,47 @@ import {
   mockBlocs,
   mockContenuBlocs,
   // mockModulePatient,
-  // mockRendezVous,
+  mockRendezVous,
   // validateModuleMock,
 } from '../mocks/mockData';
+import { api } from './auth';
+import axios, { AxiosError } from 'axios';
 
-const API_URL = 'http://localhost:3000/api';
+interface Module {
+  id: number;
+  module_id: number;
+  patient_id: number;
+  date_assignation: string;
+  progression: number;
+  derniere_activite: string | null;
+  titre: string;
+  description: string;
+  miniature: string;
+  est_publie: number;
+  est_gratuit: number;
+  duree_estimee: number;
+}
 
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': token ? `Bearer ${token}` : ''
+interface ModuleDetail {
+  id: number;
+  titre: string;
+  description: string;
+  miniature: string;
+  est_publie: number;
+  est_gratuit: number;
+  duree_estimee: number;
+  createur: {
+    prenom: string;
+    nom: string;
   };
-};
+  contenu: Array<{
+    type: string;
+    content: string;
+    metadata?: {
+      caption?: string;
+    };
+  }>;
+}
 
 export const dataService = {
   async getCurrentUser() {
@@ -26,11 +54,8 @@ export const dataService = {
       if (!token) throw new Error('Non authentifié');
 
       const decoded = JSON.parse(atob(token));
-      const response = await fetch(`${API_URL}/patients/${decoded.userId}`, {
-        headers: getAuthHeaders()
-      });
+      const { data } = await api.get(`/patients/${decoded.userId}`);
 
-      const data = await response.json();
       console.log('Données utilisateur reçues:', data);
 
       if (!data.success) {
@@ -38,8 +63,11 @@ export const dataService = {
       }
 
       return data.data;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Erreur lors de la récupération des données utilisateur:', error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des données utilisateur');
+      }
       throw error;
     }
   },
@@ -47,11 +75,8 @@ export const dataService = {
   async getModules() {
     try {
       console.log('Récupération des modules...');
-      const response = await fetch(`${API_URL}/modules`, {
-        headers: getAuthHeaders()
-      });
+      const { data } = await api.get('/modules');
 
-      const data = await response.json();
       console.log('Modules reçus:', data);
 
       if (!data.success) {
@@ -59,8 +84,11 @@ export const dataService = {
       }
 
       return data.data;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Erreur lors de la récupération des modules:', error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des modules');
+      }
       throw error;
     }
   },
@@ -68,11 +96,8 @@ export const dataService = {
   async getModuleById(id: number) {
     try {
       console.log('Récupération du module:', id);
-      const response = await fetch(`${API_URL}/modules/${id}`, {
-        headers: getAuthHeaders()
-      });
+      const { data } = await api.get(`/modules/${id}`);
 
-      const data = await response.json();
       console.log('Module reçu:', data);
 
       if (!data.success) {
@@ -80,8 +105,11 @@ export const dataService = {
       }
 
       return data.data;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Erreur lors de la récupération du module:', error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Erreur lors de la récupération du module');
+      }
       throw error;
     }
   },
@@ -89,11 +117,8 @@ export const dataService = {
   async getModulePatient(patientId: number) {
     try {
       console.log('Récupération des modules du patient:', patientId);
-      const response = await fetch(`${API_URL}/patients/${patientId}/modules`, {
-        headers: getAuthHeaders()
-      });
+      const { data } = await api.get(`/patients/${patientId}/modules`);
 
-      const data = await response.json();
       console.log('Modules du patient reçus:', data);
 
       if (!data.success) {
@@ -101,8 +126,11 @@ export const dataService = {
       }
 
       return data.data;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Erreur lors de la récupération des modules du patient:', error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des modules du patient');
+      }
       throw error;
     }
   },
@@ -110,20 +138,18 @@ export const dataService = {
   async getRendezVous(patientId: number) {
     try {
       console.log('Récupération des rendez-vous du patient:', patientId);
-      const response = await fetch(`${API_URL}/patients/${patientId}/appointments`, {
-        headers: getAuthHeaders()
-      });
-
-      const data = await response.json();
-      console.log('Rendez-vous reçus:', data);
-
-      if (!data.success) {
-        throw new Error(data.message || 'Erreur lors de la récupération des rendez-vous');
-      }
-
-      return data.data;
-    } catch (error) {
+      // TODO: Remplacer par l'appel API quand l'endpoint sera disponible
+      // const { data } = await api.get(`/patients/${patientId}/appointments`);
+      // return data.data;
+      
+      // Utilisation temporaire des données mockées
+      console.log('Utilisation des données mockées pour les rendez-vous');
+      return mockRendezVous;
+    } catch (error: unknown) {
       console.error('Erreur lors de la récupération des rendez-vous:', error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des rendez-vous');
+      }
       throw error;
     }
   },
@@ -139,12 +165,8 @@ export const dataService = {
   async validateModule(moduleId: number, patientId: number) {
     try {
       console.log('Validation du module:', { moduleId, patientId });
-      const response = await fetch(`${API_URL}/patients/${patientId}/modules/${moduleId}/validate`, {
-        method: 'POST',
-        headers: getAuthHeaders()
-      });
+      const { data } = await api.post(`/patients/${patientId}/modules/${moduleId}/validate`);
 
-      const data = await response.json();
       console.log('Réponse de validation:', data);
 
       if (!data.success) {
@@ -152,10 +174,33 @@ export const dataService = {
       }
 
       return data.success;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Erreur lors de la validation du module:', error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Erreur lors de la validation du module');
+      }
+      throw error;
+    }
+  },
+
+  async getModuleDetail(moduleId: number) {
+    try {
+      console.log('Récupération des détails du module:', moduleId);
+      const { data } = await api.get(`/patients/module/${moduleId}`);
+
+      console.log('Détails du module reçus:', data);
+
+      if (!data.success) {
+        throw new Error(data.message || 'Erreur lors de la récupération des détails du module');
+      }
+
+      return data.data;
+    } catch (error: unknown) {
+      console.error('Erreur lors de la récupération des détails du module:', error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des détails du module');
+      }
       throw error;
     }
   },
 };
-

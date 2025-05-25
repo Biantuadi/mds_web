@@ -5,9 +5,37 @@ import { Badge } from "../../components/ui/badge";
 import { ScrollArea } from "../../components/ui/scroll-area";
 import { dataService } from "../../services/dataService";
 
+interface User {
+  id: number;
+  prenom: string;
+  nom: string;
+  email: string;
+  telephone: string;
+  competences: string;
+  emploi_actuel: string;
+  emploi_vise: string;
+  experience: string;
+  notes: string;
+  image_profil: string;
+  photo: string;
+  date_inscription: string;
+}
+
+interface RendezVous {
+  id: number;
+  patient_id: number;
+  psychologue_id: number;
+  date_heure: string;
+  duree: number;
+  type: string;
+  notes: string;
+  statut: string;
+  date_creation: string;
+}
+
 export const Appointments = (): JSX.Element => {
-  const [user, setUser] = useState<any>(null);
-  const [rendezVous, setRendezVous] = useState<any[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [rendezVous, setRendezVous] = useState<RendezVous[]>([]);
 
   useEffect(() => {
     dataService.getCurrentUser().then(setUser);
@@ -30,8 +58,8 @@ export const Appointments = (): JSX.Element => {
 
   // Rendez-vous à venir (date future)
   const rdvAVenir = [...rendezVous]
-    .filter(rdv => new Date(rdv.date) > new Date())
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    .filter(rdv => new Date(rdv.date_heure) > new Date())
+    .sort((a, b) => new Date(a.date_heure).getTime() - new Date(b.date_heure).getTime());
 
   return (
     <div className="bg-transparent flex flex-row justify-center ">
@@ -94,10 +122,10 @@ export const Appointments = (): JSX.Element => {
                             style={{ backgroundColor: "#ef7d4f" }}
                           />
                           <span className="[font-family:'Quicksand',Helvetica] font-semibold text-[#ef7d4f] text-base">
-                            {formatDate(rdv.date)}
+                            {formatDate(rdv.date_heure)}
                           </span>
                           <span className="[font-family:'Quicksand',Helvetica] font-semibold text-[#ef7d4f] text-base">
-                            {formatTime(rdv.date, rdv.duration)}
+                            {formatTime(rdv.date_heure, rdv.duree)}
                           </span>
                           <span className="ml-2 text-xs text-[#75746f]">{rdv.type}</span>
                         </div>
@@ -105,7 +133,7 @@ export const Appointments = (): JSX.Element => {
                           {rdv.notes || "Rendez-vous"}
                         </h3>
                         <p className="[font-family:'Quicksand',Helvetica] text-[#75746f] text-sm">
-                          Statut : {rdv.status}
+                          Statut : {rdv.statut}
                         </p>
                       </div>
                     ))}
