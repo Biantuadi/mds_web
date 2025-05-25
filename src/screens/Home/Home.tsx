@@ -28,26 +28,24 @@ interface User {
 
 interface Module {
   id: number;
+  module_id: number;
+  patient_id: number;
+  date_assignation: string;
+  progression: number;
+  derniere_activite: string | null;
   titre: string;
   description: string;
   miniature: string;
-  est_publie: boolean;
-  est_gratuit: boolean;
+  est_publie: number;
+  est_gratuit: number;
   duree_estimee: number;
-}
-
-interface ModulePatient {
-  module_id: number;
-  progression: number;
-  date_assignation: string;
-  derniere_activite: string;
 }
 
 export const Home = (): JSX.Element => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [modules, setModules] = useState<Module[]>([]);
-  const [modulePatient, setModulePatient] = useState<ModulePatient[]>([]);
+  const [modulePatient, setModulePatient] = useState<Module[]>([]);
   const [rendezVous, setRendezVous] = useState<any[]>([]);
 
   useEffect(() => {
@@ -59,7 +57,6 @@ export const Home = (): JSX.Element => {
         if (userData) {
           setUser(userData);
         } else {
-          // Rediriger vers la page de login si pas d'utilisateur
           navigate('/login');
         }
       } catch (error) {
@@ -92,16 +89,14 @@ export const Home = (): JSX.Element => {
         console.log('📊 État après mise à jour:', {
           modulePatient: modulePatientData,
           modules: modulesData,
-          modulesTermines: modulePatientData.filter((mp: any) => mp.progression >= 100).length,
+          modulesTermines: modulePatientData.filter((mp:any) => mp.progression >= 100).length,
           totalModules: modulePatientData.length,
           moduleEnCours: modulePatientData
             .filter((mp: any) => mp.progression < 100)
             .sort((a: any, b: any) => a.progression - b.progression)[0],
           modulesRecents: [...modulePatientData]
-            .sort((a: any, b: any) => new Date(b.derniere_activite || 0).getTime() - new Date(a.derniere_activite || 0).getTime())
+            .sort((a, b) => new Date(b.derniere_activite || 0).getTime() - new Date(a.derniere_activite || 0).getTime())
             .slice(0, 5)
-            .map((mp: any) => modulesData.find((m: any) => m.id === mp.module_id))
-            .filter(Boolean)
         });
       }).catch(error => {
         console.error('❌ Erreur lors du chargement des données:', error);
@@ -110,23 +105,21 @@ export const Home = (): JSX.Element => {
   }, [user]);
 
   // Progression
-  const modulesTermines = modulePatient.filter((mp: any) => mp.progression >= 100).length;
+  const modulesTermines = modulePatient.filter((mp) => mp.progression >= 100).length;
   const totalModules = modulePatient.length;
   const moduleEnCours = modulePatient
-    .filter((mp: any) => mp.progression < 100)
-    .sort((a: any, b: any) => a.progression - b.progression)[0];
+    .filter((mp) => mp.progression < 100)
+    .sort((a, b) => a.progression - b.progression)[0];
 
   // Modules récents
   const modulesRecents = [...modulePatient]
-    .sort((a: any, b: any) => new Date(b.derniere_activite || 0).getTime() - new Date(a.derniere_activite || 0).getTime())
-    .slice(0, 5)
-    .map((mp: any) => modules.find((m: any) => m.id === mp.module_id))
-    .filter(Boolean);
+    .sort((a, b) => new Date(b.derniere_activite || 0).getTime() - new Date(a.derniere_activite || 0).getTime())
+    .slice(0, 5);
 
   // Rendez-vous à venir
   const rdvAVenir = [...rendezVous]
-    .filter(rdv => new Date(rdv.date) > new Date())
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .filter(rdv => new Date(rdv.date_heure) > new Date())
+    .sort((a, b) => new Date(a.date_heure).getTime() - new Date(b.date_heure).getTime())
     .slice(0, 3);
 
   // Helper pour formatage date/heure
@@ -182,8 +175,8 @@ export const Home = (): JSX.Element => {
                   <div key={idx} className="flex flex-col gap-1 border-b last:border-b-0 pb-2 last:pb-0">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full" style={{background: "#ef7d4f"}}></span>
-                      <span className="font-semibold text-[15px]" style={{color: "#ef7d4f"}}>{formatDate(rdv.date)}</span>
-                      <span className="font-semibold text-[15px]" style={{color: "#ef7d4f"}}>{formatTime(rdv.date, rdv.duration)}</span>
+                      <span className="font-semibold text-[15px]" style={{color: "#ef7d4f"}}>{formatDate(rdv.date_heure)}</span>
+                      <span className="font-semibold text-[15px]" style={{color: "#ef7d4f"}}>{formatTime(rdv.date_heure, rdv.duree_estimee)}</span>
                     </div>
                     <div className="font-medium text-black text-[15px]">{rdv.notes || "Rendez-vous"}</div>
                     <div className="text-xs text-[#75746f] truncate max-w-[90%]">{rdv.status}</div>
@@ -221,17 +214,17 @@ export const Home = (): JSX.Element => {
                 {moduleEnCours ? (
                   <>
                     <img 
-                      src={modules.find(m => m.id === moduleEnCours.module_id)?.miniature || "/images/default-module.png"} 
-                      alt={modules.find(m => m.id === moduleEnCours.module_id)?.titre} 
+                      src={modules.find(m => m.module_id === moduleEnCours.module_id)?.miniature || "/images/default-module.png"} 
+                      alt={modules.find(m => m.module_id === moduleEnCours.module_id)?.titre} 
                       className="rounded-t-2xl w-full h-40 object-cover mb-2" 
                     />
                     <div className="text-[#ef7d4f] text-2xl font-semibold font-[Quicksand] mb-1">
-                      {modules.find(m => m.id === moduleEnCours.module_id)?.titre}
+                      {modules.find(m => m.module_id === moduleEnCours.module_id)?.titre}
                     </div>
                     <div className="flex items-center gap-2 text-black text-lg">
                       <TimerIcon className="w-6 h-6" />
-                      {modules.find(m => m.id === moduleEnCours.module_id)?.duree_estimee
-                        ? `${modules.find(m => m.id === moduleEnCours.module_id)?.duree_estimee} min`
+                      {modules.find(m => m.module_id === moduleEnCours.module_id)?.duree_estimee
+                        ? `${modules.find(m => m.module_id === moduleEnCours.module_id)?.duree_estimee} min`
                         : ""}
                     </div>
                   </>
@@ -252,35 +245,34 @@ export const Home = (): JSX.Element => {
               <ChevronRightIcon className="w-6 h-6 text-[#ef7d4f]" />
             </div>
             <div className="flex gap-3 md:gap-4 overflow-x-auto pb-2">
-              {modulesRecents.map((module, idx) => {
-                const mp = modulePatient.find(mp => mp.module_id === module?.id);
-                const isTermine = mp && mp.progression >= 100;
-                return (
-                  <div
-                    key={idx}
-                    className="relative min-w-[220px] max-w-[240px] bg-[#fffbf1] rounded-2xl shadow-md flex flex-col items-center cursor-pointer"
-                    onClick={() => navigate(`/module/${module?.id}`)}
-                  >
-                    {isTermine && (
-                      <span className="absolute top-2 right-2 bg-[#4A5D4A] text-white text-xs font-bold px-3 py-1 rounded-full z-10">
-                        Terminé
-                      </span>
-                    )}
-                    <img 
-                      src={module?.miniature || "/images/default-module.png"} 
-                      alt={module?.titre} 
-                      className="rounded-t-2xl w-full h-28 object-cover" 
-                    />
-                    <div className="text-[#ef7d4f] text-xl font-semibold font-[Quicksand] mt-2 mb-1 text-center px-2">
-                      {module?.titre}
-                    </div>
-                    <div className="flex items-center gap-2 text-black text-base mb-2">
-                      <TimerIcon className="w-5 h-5" />
-                      {module?.duree_estimee ? `${module.duree_estimee} min` : ""}
-                    </div>
+              {modulesRecents.length === 0 && (
+                <div className="text-[#75746f] text-center w-full py-4">Aucun module récent</div>
+              )}
+              {modulesRecents.map((module) => (
+                <div
+                  key={module.id}
+                  className="relative min-w-[220px] max-w-[240px] bg-[#fffbf1] rounded-2xl shadow-md flex flex-col items-center cursor-pointer"
+                  onClick={() => navigate(`/module/${module.id}`)}
+                >
+                  {module.progression >= 100 && (
+                    <span className="absolute top-2 right-2 bg-[#4A5D4A] text-white text-xs font-bold px-3 py-1 rounded-full z-10">
+                      Terminé
+                    </span>
+                  )}
+                  <img 
+                    src={module.miniature || "/images/default-module.png"} 
+                    alt={module.titre} 
+                    className="rounded-t-2xl w-full h-28 object-cover" 
+                  />
+                  <div className="text-[#ef7d4f] text-xl font-semibold font-[Quicksand] mt-2 mb-1 text-center px-2">
+                    {module.titre}
                   </div>
-                );
-              })}
+                  <div className="flex items-center gap-2 text-black text-base mb-2">
+                    <TimerIcon className="w-5 h-5" />
+                    {module.duree_estimee ? `${module.duree_estimee} min` : ""}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

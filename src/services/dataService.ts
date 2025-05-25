@@ -38,11 +38,14 @@ interface ModuleDetail {
     nom: string;
   };
   contenu: Array<{
-    type: string;
-    content: string;
-    metadata?: {
-      caption?: string;
-    };
+    id: number;
+    module_id: number;
+    bloc_id: number;
+    contenu: string;
+    url_ressource: string | null;
+    ordre: number;
+    metadata: any | null;
+    type: 'titre' | 'texte' | 'liste' | 'image' | 'citation';
   }>;
 }
 

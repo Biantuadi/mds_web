@@ -16,11 +16,14 @@ interface ModuleDetail {
     nom: string;
   };
   contenu: Array<{
-    type: string;
-    content: string;
-    metadata?: {
-      caption?: string;
-    };
+    id: number;
+    module_id: number;
+    bloc_id: number;
+    contenu: string;
+    url_ressource: string | null;
+    ordre: number;
+    metadata: any | null;
+    type: 'titre' | 'texte' | 'liste' | 'image' | 'citation';
   }>;
 }
 
@@ -78,6 +81,58 @@ export const ModuleDetail = () => {
         console.error('Erreur lors de la validation du module:', err);
       }
     }
+  };
+
+  const renderContent = (contenu: ModuleDetail['contenu']) => {
+    return contenu
+      .sort((a, b) => a.ordre - b.ordre)
+      .map((bloc) => {
+        switch (bloc.type) {
+          case 'titre':
+            return (
+              <h2 key={bloc.id} className="text-2xl font-bold text-[#ef7d4f] mb-4">
+                {bloc.contenu}
+              </h2>
+            );
+          case 'texte':
+            return (
+              <p key={bloc.id} className="mb-4 text-justify">
+                {bloc.contenu}
+              </p>
+            );
+          case 'liste':
+            return (
+              <ul key={bloc.id} className="mb-4 list-disc pl-6 text-[#75746f]">
+                {bloc.contenu.split('\n').map((item, i) => (
+                  <li key={i}>{item.replace(/^- /, "")}</li>
+                ))}
+              </ul>
+            );
+          case 'image':
+            return (
+              <div key={bloc.id} className="mb-4">
+                <img
+                  src={bloc.url_ressource || bloc.contenu}
+                  alt={bloc.metadata?.caption || ""}
+                  className="w-full rounded-lg"
+                />
+                {bloc.metadata?.caption && (
+                  <p className="text-sm text-[#75746f] mt-2 text-center">
+                    {bloc.metadata.caption}
+                  </p>
+                )}
+              </div>
+            );
+          case 'citation':
+            return (
+              <div key={bloc.id} className="bg-[#eaeaea] rounded-xl px-4 py-2 text-[#75746f] mb-4 italic">
+                {bloc.contenu}
+              </div>
+            );
+          default:
+            return null;
+        }
+      });
   };
 
   if (loading) {
@@ -150,45 +205,7 @@ export const ModuleDetail = () => {
 
       {/* Contenu dynamique */}
       <div className="max-w-4xl mx-auto mt-6 px-4">
-        {module.contenu.map((bloc, idx) => {
-          if (bloc.type === 'heading') {
-            return (
-              <h2 key={idx} className="text-2xl font-bold text-[#ef7d4f] mb-4">{bloc.content}</h2>
-            );
-          }
-          if (bloc.type === 'text') {
-            return (
-              <p key={idx} className="mb-4 text-justify">{bloc.content}</p>
-            );
-          }
-          if (bloc.type === 'image') {
-            return (
-              <div key={idx} className="mb-4">
-                <img src={bloc.content} alt={bloc.metadata?.caption} className="w-full rounded-lg" />
-                {bloc.metadata?.caption && (
-                  <p className="text-sm text-[#75746f] mt-2 text-center">{bloc.metadata.caption}</p>
-                )}
-              </div>
-            );
-          }
-          if (bloc.type === 'list') {
-            return (
-              <ul key={idx} className="mb-4 list-disc pl-6 text-[#75746f]">
-                {bloc.content.split('\n').map((item: string, i: number) =>
-                  <li key={i}>{item.replace(/^- /, "")}</li>
-                )}
-              </ul>
-            );
-          }
-          if (bloc.type === 'quote') {
-            return (
-              <div key={idx} className="bg-[#eaeaea] rounded-xl px-4 py-2 text-[#75746f] mb-4 italic">
-                {bloc.content}
-              </div>
-            );
-          }
-          return null;
-        })}
+        {renderContent(module.contenu)}
       </div>
 
       {/* Bouton */}
