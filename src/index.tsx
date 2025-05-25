@@ -43,7 +43,6 @@ createRoot(document.getElementById("app") as HTMLElement).render(
                 </ProtectedRoute>
               }
             />
-            <Route path="*" element={<Navigate to="/" replace />} />
             <Route
               path="/modules"
               element={
