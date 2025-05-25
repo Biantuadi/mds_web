@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_URL = process.env.API_URL;
+const API_URL = 'https://dashboard-aud.vercel.app/api';
 const TOKEN_COOKIE = 'auth_token';
 const USER_COOKIE = 'user_data';
 const TOKEN_EXPIRY = 7; // 7 jours
