@@ -10,6 +10,7 @@ import { ModuleDetail } from "./screens/ModuleDetail/ModuleDetail";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { store, persistor } from "./store";
 import { ModulesList } from "./screens/ModulesList";
+import { Profile } from "./screens/Profile/Profile";
 
 createRoot(document.getElementById("app") as HTMLElement).render(
   <StrictMode>
@@ -19,7 +20,7 @@ createRoot(document.getElementById("app") as HTMLElement).render(
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route
-              path="/"
+              path="/home"
               element={
                 <ProtectedRoute>
                   <Home />
@@ -48,6 +49,14 @@ createRoot(document.getElementById("app") as HTMLElement).render(
               element={
                 <ProtectedRoute>
                   <ModulesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             />

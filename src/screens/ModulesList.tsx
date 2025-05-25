@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CalendarIcon, BookIcon, UserIcon, TimerIcon, Search } from "lucide-react";
+import { TimerIcon, Search } from "lucide-react";
 import { dataService } from "../services/dataService";
+import Header from "../components/Header";
 
 interface Module {
   id: number;
@@ -45,20 +46,7 @@ export const ModulesList = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#fffbf1]">
       {/* Header */}
-      <header className="flex items-center justify-between w-full px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md">
-        <div className="font-bold text-lg text-black font-[Quicksand]">
-          {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"}
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
-          <img src="/home_imgs/logo-arc.svg" alt="Logo arc" className="h-12 mt-2" />
-        </div>
-        <div className="flex items-center gap-6">
-          <CalendarIcon className="w-6 h-6 cursor-pointer" onClick={() => navigate('/appointments')} />
-          <BookIcon className="w-6 h-6 cursor-pointer text-[#ef7d4f]" />
-          <UserIcon className="w-6 h-6 cursor-pointer" />
-        </div>
-      </header>
+      <Header user={user}/>
 
       <div className="flex flex-col bg-[url(/bg_modules_list.png)] bg-cover bg-center w-full h-[80vh] ">
         {/* Fil d'ariane */}

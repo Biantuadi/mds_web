@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { CalendarIcon, BookIcon, UserIcon } from "lucide-react";
 import { dataService } from "../../services/dataService";
+import Header from "../../components/Header";
 
 interface ModuleDetail {
   id: number;
@@ -162,20 +162,7 @@ export const ModuleDetail = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#fffbf1]">
       {/* HEADER */}
-      <header className="flex flex-col md:flex-row items-center justify-between w-full px-4 md:px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md gap-2 md:gap-0">
-        <div className="font-bold text-base md:text-lg text-black font-[Quicksand]">
-          {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"}
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="text-xl md:text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
-          <img src="/home_imgs/logo-arc.svg" alt="Logo arc" className="h-10 md:h-12 mt-2" />
-        </div>
-        <div className="flex items-center gap-4 md:gap-6">
-          <CalendarIcon className="w-6 h-6 cursor-pointer" onClick={() => navigate('/appointments')} />
-          <BookIcon className="w-6 h-6 cursor-pointer" onClick={() => navigate('/modules')} />
-          <UserIcon className="w-6 h-6 cursor-pointer" />
-        </div>
-      </header>
+      <Header user={user}/>
 
       {/* Fil d'ariane */}
       <div className="flex items-center gap-2 px-8 mt-4 text-sm text-[#75746f]">
