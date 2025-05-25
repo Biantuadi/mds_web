@@ -30,8 +30,8 @@ export const Appointments = (): JSX.Element => {
 
   // Rendez-vous à venir (date future)
   const rdvAVenir = [...rendezVous]
-    .filter(rdv => new Date(rdv.date_heure) > new Date())
-    .sort((a, b) => new Date(a.date_heure).getTime() - new Date(b.date_heure).getTime());
+    .filter(rdv => new Date(rdv.date) > new Date())
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
     <div className="bg-transparent flex flex-row justify-center ">
@@ -94,10 +94,10 @@ export const Appointments = (): JSX.Element => {
                             style={{ backgroundColor: "#ef7d4f" }}
                           />
                           <span className="[font-family:'Quicksand',Helvetica] font-semibold text-[#ef7d4f] text-base">
-                            {formatDate(rdv.date_heure)}
+                            {formatDate(rdv.date)}
                           </span>
                           <span className="[font-family:'Quicksand',Helvetica] font-semibold text-[#ef7d4f] text-base">
-                            {formatTime(rdv.date_heure, rdv.duree)}
+                            {formatTime(rdv.date, rdv.duration)}
                           </span>
                           <span className="ml-2 text-xs text-[#75746f]">{rdv.type}</span>
                         </div>
@@ -105,7 +105,7 @@ export const Appointments = (): JSX.Element => {
                           {rdv.notes || "Rendez-vous"}
                         </h3>
                         <p className="[font-family:'Quicksand',Helvetica] text-[#75746f] text-sm">
-                          Statut : {rdv.statut}
+                          Statut : {rdv.status}
                         </p>
                       </div>
                     ))}

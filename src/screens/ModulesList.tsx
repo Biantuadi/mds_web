@@ -24,18 +24,18 @@ export const ModulesList = () => {
 
   // Associer chaque module à sa progression (si assigné à la patiente)
   const modulesWithProgress = modules.map((mod: any) => {
-    const mp = modulePatient.find((mp: any) => mp.module_id === mod.id);
+    const mp = modulePatient.find((mp: any) => mp.moduleId === mod.id);
     return {
       ...mod,
-      progression: mp ? mp.progression : 0,
-      derniere_activite: mp ? mp.derniere_activite : null,
+      progression: mp ? mp.progress : 0,
+      lastActivity: mp ? mp.lastActivity : null,
     };
   });
 
   // Filtrage recherche et modules terminés
   const filteredModules = modulesWithProgress
     .filter(m =>
-      m.titre.toLowerCase().includes(search.toLowerCase()) &&
+      m.title.toLowerCase().includes(search.toLowerCase()) &&
       (showCompleted ? m.progression >= 100 : true)
     );
 
@@ -44,7 +44,7 @@ export const ModulesList = () => {
       {/* Header */}
       <header className="flex items-center justify-between w-full px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md">
         <div className="font-bold text-lg text-black font-[Quicksand]">
-          {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"}
+          {user ? `BONJOUR ${user.firstname.toUpperCase()}` : "BONJOUR"}
         </div>
         <div className="flex flex-col items-center">
           <div className="text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
@@ -108,12 +108,12 @@ export const ModulesList = () => {
                     Terminé
                   </span>
                 )}
-                <img src={module.miniature || "/images/default-module.png"} alt={module.titre} className="w-16 h-16 rounded-xl object-cover mr-6 border border-[#ececec]" />
+                <img src={module.thumbnail || "/images/default-module.png"} alt={module.title} className="w-16 h-16 rounded-xl object-cover mr-6 border border-[#ececec]" />
                 <div className="flex-1 text-center">
-                  <div className="text-lg font-[Quicksand] font-semibold group-hover:text-[#ef7d4f]">{module.titre}</div>
+                  <div className="text-lg font-[Quicksand] font-semibold group-hover:text-[#ef7d4f]">{module.title}</div>
                   <div className="flex items-center justify-center gap-2 text-[#75746f] mt-1">
                     <TimerIcon className="w-5 h-5" />
-                    <span>{module.duree_estimee ? `${module.duree_estimee} min` : ""}</span>
+                    <span>{module.estimatedDuration ? `${module.estimatedDuration} min` : ""}</span>
                     {module.progression > 0 && (
                       <span className="ml-4 text-xs text-[#ef7d4f]">{module.progression}% complété</span>
                     )}

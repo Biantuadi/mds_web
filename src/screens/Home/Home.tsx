@@ -30,26 +30,24 @@ export const Home = (): JSX.Element => {
   }, [user]);
 
   // Progression
-  const modulesTermines = modulePatient.filter(mp => mp.progression >= 100).length;
+  const modulesTermines = modulePatient.filter(mp => mp.progress >= 100).length;
   const totalModules = modulePatient.length;
   const moduleEnCours = modulePatient
-    .filter(mp => mp.progression < 100)
-    .sort((a, b) => a.progression - b.progression)[0];
+    .filter(mp => mp.progress < 100)
+    .sort((a, b) => a.progress - b.progress)[0];
 
   // Modules récents
   const modulesRecents = [...modulePatient]
-    .sort((a, b) => new Date(b.derniere_activite).getTime() - new Date(a.derniere_activite).getTime())
+    .sort((a, b) => new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime())
     .slice(0, 5)
-    .map(mp => modules.find(m => m.id === mp.module_id))
+    .map(mp => modules.find(m => m.id === mp.moduleId))
     .filter(Boolean);
 
   // Rendez-vous à venir
   const rdvAVenir = [...rendezVous]
-  .filter(rdv => new Date(rdv.date_heure) > new Date())
-  .sort((a, b) => new Date(a.date_heure).getTime() - new Date(b.date_heure).getTime())
-  .slice(0, 3); 
-
-  console.log(rdvAVenir);
+    .filter(rdv => new Date(rdv.date) > new Date())
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 3);
 
   // Helper pour formatage date/heure
   const formatDate = (iso: string) => new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
@@ -64,7 +62,7 @@ export const Home = (): JSX.Element => {
       {/* HEADER */}
       <header className="flex flex-col md:flex-row items-center justify-between w-full px-4 md:px-8 py-4 bg-[#fffbf1] rounded-b-2xl shadow-md gap-2 md:gap-0">
         <div className="font-bold text-base md:text-lg text-black font-[Quicksand]">
-          {user ? `BONJOUR ${user.prenom.toUpperCase()}` : "BONJOUR"}
+          {user ? `BONJOUR ${user.firstname.toUpperCase()}` : "BONJOUR"}
         </div>
         <div className="flex flex-col items-center">
           <div className="text-xl md:text-2xl font-bold tracking-widest font-[Reef-Bold] text-black">LES AUDACIEUSES ACADEMIE</div>
@@ -95,11 +93,11 @@ export const Home = (): JSX.Element => {
                   <div key={idx} className="flex flex-col gap-1 border-b last:border-b-0 pb-2 last:pb-0">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full" style={{background: "#ef7d4f"}}></span>
-                      <span className="font-semibold text-[15px]" style={{color: "#ef7d4f"}}>{formatDate(rdv.date_heure)}</span>
-                      <span className="font-semibold text-[15px]" style={{color: "#ef7d4f"}}>{formatTime(rdv.date_heure, rdv.duree)}</span>
+                      <span className="font-semibold text-[15px]" style={{color: "#ef7d4f"}}>{formatDate(rdv.date)}</span>
+                      <span className="font-semibold text-[15px]" style={{color: "#ef7d4f"}}>{formatTime(rdv.date, rdv.duration)}</span>
                     </div>
                     <div className="font-medium text-black text-[15px]">{rdv.notes || "Rendez-vous"}</div>
-                    <div className="text-xs text-[#75746f] truncate max-w-[90%]">{rdv.statut}</div>
+                    <div className="text-xs text-[#75746f] truncate max-w-[90%]">{rdv.status}</div>
                   </div>
                 ))}
               </div>
@@ -133,14 +131,14 @@ export const Home = (): JSX.Element => {
               <div className="bg-[#fffbf1] rounded-2xl shadow-md flex flex-col items-center p-4 w-full">
                 {moduleEnCours ? (
                   <>
-                    <img src={modules.find(m => m.id === moduleEnCours.module_id)?.miniature || "/images/default-module.png"} alt={modules.find(m => m.id === moduleEnCours.module_id)?.titre} className="rounded-t-2xl w-full h-40 object-cover mb-2" />
+                    <img src={modules.find(m => m.id === moduleEnCours.moduleId)?.thumbnail || "/images/default-module.png"} alt={modules.find(m => m.id === moduleEnCours.moduleId)?.title} className="rounded-t-2xl w-full h-40 object-cover mb-2" />
                     <div className="text-[#ef7d4f] text-2xl font-semibold font-[Quicksand] mb-1">
-                      {modules.find(m => m.id === moduleEnCours.module_id)?.titre}
+                      {modules.find(m => m.id === moduleEnCours.moduleId)?.title}
                     </div>
                     <div className="flex items-center gap-2 text-black text-lg">
                       <TimerIcon className="w-6 h-6" />
-                      {modules.find(m => m.id === moduleEnCours.module_id)?.duree_estimee
-                        ? `${modules.find(m => m.id === moduleEnCours.module_id)?.duree_estimee} min`
+                      {modules.find(m => m.id === moduleEnCours.moduleId)?.estimatedDuration
+                        ? `${modules.find(m => m.id === moduleEnCours.moduleId)?.estimatedDuration} min`
                         : ""}
                     </div>
                   </>
@@ -163,8 +161,8 @@ export const Home = (): JSX.Element => {
             <div className="flex gap-3 md:gap-4 overflow-x-auto pb-2">
               {modulesRecents.map((module, idx) => {
                 // Trouve la progression pour ce module
-                const mp = modulePatient.find(mp => mp.module_id === module.id);
-                const isTermine = mp && mp.progression >= 100;
+                const mp = modulePatient.find(mp => mp.moduleId === module.id);
+                const isTermine = mp && mp.progress >= 100;
                 return (
                   <div
                     key={idx}
@@ -177,11 +175,11 @@ export const Home = (): JSX.Element => {
                         Terminé
                       </span>
                     )}
-                    <img src={module.miniature || "/images/default-module.png"} alt={module.titre} className="rounded-t-2xl w-full h-28 object-cover" />
-                    <div className="text-[#ef7d4f] text-xl font-semibold font-[Quicksand] mt-2 mb-1 text-center px-2">{module.titre}</div>
+                    <img src={module.thumbnail || "/images/default-module.png"} alt={module.title} className="rounded-t-2xl w-full h-28 object-cover" />
+                    <div className="text-[#ef7d4f] text-xl font-semibold font-[Quicksand] mt-2 mb-1 text-center px-2">{module.title}</div>
                     <div className="flex items-center gap-2 text-black text-base mb-2">
                       <TimerIcon className="w-5 h-5" />
-                      {module.duree_estimee ? `${module.duree_estimee} min` : ""}
+                      {module.estimatedDuration ? `${module.estimatedDuration} min` : ""}
                     </div>
                   </div>
                 );

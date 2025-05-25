@@ -1,31 +1,54 @@
+const API_URL = 'http://localhost:3000/api';
 
-// Mock user data for testing
-const MOCK_USERS = [
-  {
-    id: '1',
-    username: 'marie',
-    password: 'test123'
-  }
-];
+export const loginUser = async (email: string, password: string): Promise<{ token: string; user: any }> => {
+  try {
+    console.log('Tentative de connexion avec:', { email });
+    
+    const response = await fetch(`${API_URL}/patients/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        mot_de_passe: password
+      })
+    });
 
-export const loginUser = async (username: string, password: string): Promise<{ token: string; user: any }> => {
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+    const data = await response.json();
+    console.log('Réponse du serveur:', data);
 
-  const user = MOCK_USERS.find(u => u.username === username && u.password === password);
-
-  if (!user) {
-    throw new Error('Invalid credentials');
-  }
-
-  // Generate a mock JWT token
-  const token = btoa(JSON.stringify({ userId: user.id, username: user.username }));
-
-  return {
-    token,
-    user: {
-      id: user.id,
-      username: user.username
+    if (!data.success) {
+      throw new Error(data.message || 'Erreur de connexion');
     }
-  };
+
+    // Stocker le token dans le localStorage
+    const token = btoa(JSON.stringify({ userId: data.data.id, email: data.data.email }));
+    localStorage.setItem('token', token);
+
+    return {
+      token,
+      user: data.data
+    };
+  } catch (error) {
+    console.error('Erreur lors de la connexion:', error);
+    throw error;
+  }
+};
+
+export const getCurrentUser = (): any => {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+  
+  try {
+    const decoded = JSON.parse(atob(token));
+    return decoded;
+  } catch (error) {
+    console.error('Erreur lors de la lecture du token:', error);
+    return null;
+  }
+};
+
+export const logoutUser = () => {
+  localStorage.removeItem('token');
 };
